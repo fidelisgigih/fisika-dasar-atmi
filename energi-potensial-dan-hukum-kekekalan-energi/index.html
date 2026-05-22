@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energi Potensial & Kekekalan Energi - Fisika Dasar</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '$', right: '$', display: false}]});"></script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --fg: #1e293b;
+            --muted: #64748b;
+            --accent: #1e293b;       
+            --accent-pe: #059669;    
+            --accent-ke: #dc2626;    
+            --accent-mec: #4f46e5;   
+            --accent-th: #f97316;    
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --nav-h: 80px;
+            --glass: rgba(255,255,255,0.85);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(--fg); overflow:hidden; height:100vh; width:100vw; font-size: 17px; }
+        h1,h2,h3 { font-family:'Playfair Display',serif; }
+
+        .top-nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); background:var(--glass); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); z-index:200; display:flex; align-items:center; padding:0 1.5rem; gap:1rem; }
+        .top-nav .logo-area { display:flex; align-items:center; gap:1rem; flex-shrink:0; }
+        .top-nav .logo-area img { height:55px; width:auto; object-fit:contain; border-radius:4px; }
+        .top-nav .logo-area span { font-weight:800; font-size:1.1rem; color:var(--accent); white-space:nowrap; }
+        .nav-center { flex:1; display:flex; justify-content:center; align-items:center; gap:0.35rem; overflow-x:auto; }
+        .nav-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; border:none; cursor:pointer; transition:all 0.3s; flex-shrink:0; }
+        .nav-dot.active { background:var(--accent-mec); width:24px; border-radius:4px; box-shadow:0 0 8px rgba(79,70,229,0.4); }
+        .nav-dot:hover { background:var(--accent-mec); }
+        .nav-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:0.75rem; flex-shrink:0; }
+        .nav-btn:hover { background:var(--accent-mec); color:#fff; border-color:var(--accent-mec); }
+        .slide-counter { font-size:0.75rem; color:var(--muted); font-weight:600; white-space:nowrap; flex-shrink:0; }
+
+        .progress-bar { position:fixed; top:var(--nav-h); left:0; height:3px; z-index:201; background:linear-gradient(90deg, var(--accent-pe), var(--accent-mec), var(--accent-ke)); transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+        .slide-area { position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; overflow:hidden; }
+        .slide { position:absolute; top:0; left:0; width:100%; height:100%; overflow-y:auto; overflow-x:hidden; opacity:0; transform:translateX(60px); pointer-events:none; transition:opacity 0.5s ease, transform 0.5s ease; padding:2rem 2.5rem 3rem; z-index:1; }
+        .slide.active { opacity:1; transform:translateX(0); pointer-events:auto; z-index:10; }
+
+        .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); transition:all 0.3s; }
+        .card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+
+        .formula-box { display:inline-block; font-size:2.1rem; font-weight:700; padding:1rem 2rem; background:linear-gradient(135deg,rgba(30,41,59,0.08),rgba(79,70,229,0.05)); border:1px solid rgba(30,41,59,0.2); border-radius:0.75rem; }
+
+        .math-block { background:#f1f5f9; border-left:4px solid var(--accent-mec); padding:1rem 1.5rem; border-radius:0 0.5rem 0.5rem 0; margin:0.75rem 0; overflow-x:auto; font-size:1.2rem; }
+        .math-block-pe { border-left-color: var(--accent-pe); background: rgba(5, 150, 105, 0.05); }
+        .math-block-ke { border-left-color: var(--accent-ke); background: rgba(220, 38, 38, 0.05); }
+
+        .badge { display:inline-block; padding:0.35rem 0.9rem; border-radius:9999px; font-size:0.8rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; }
+
+        .profile-img { width:220px; height:220px; border-radius:1rem; object-fit:cover; object-position: top center; border:3px solid var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-anim { animation:float 4s ease-in-out infinite; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .slide.active .anim-up { animation:fadeUp 0.6s ease forwards; }
+        .slide.active .anim-up-d1 { animation:fadeUp 0.6s 0.1s ease forwards; opacity:0; }
+        .slide.active .anim-up-d2 { animation:fadeUp 0.6s 0.2s ease forwards; opacity:0; }
+        .slide.active .anim-up-d3 { animation:fadeUp 0.6s 0.3s ease forwards; opacity:0; }
+        .slide.active .anim-up-d4 { animation:fadeUp 0.6s 0.4s ease forwards; opacity:0; }
+
+        .slide::-webkit-scrollbar { width:4px; }
+        .slide::-webkit-scrollbar-track { background:transparent; }
+        .slide::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:2px; }
+
+        /* --- CSS untuk Slide Interaktif --- */
+        .prompt-wrapper { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1rem; background: #fff; transition: all 0.3s; }
+        .prompt-wrapper.active { border-color: var(--accent-mec); background: linear-gradient(135deg, rgba(30,41,59,0.02), rgba(79,70,229,0.02)); }
+        .prompt-header { display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+        .prompt-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9rem; }
+        .prompt-wrapper.active .prompt-icon { background: var(--accent-mec); }
+        .reveal-btn { background: transparent; border: 1px dashed var(--muted); color: var(--muted); padding: 0.3rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-top: 0.75rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .reveal-btn:hover { border-style: solid; border-color: var(--accent-mec); color: var(--accent-mec); }
+        .prompt-wrapper.active .reveal-btn { border-color: var(--accent-mec); color: var(--accent-mec); background: rgba(79,70,229,0.05); }
+        .discussion-box { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease; margin-top: 0; background: #f8fafc; border-left: 3px solid var(--accent-mec); border-radius: 0 0.5rem 0.5rem 0; padding: 0 1rem; font-size: 0.95rem; line-height: 1.6; }
+        .discussion-box.show { max-height: 1500px; opacity: 1; margin-top: 1rem; padding: 1rem; }
+
+        /* Animasi Khusus Slide 3 (Derek SVG) */
+        @keyframes lift-box { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-100px); } }
+        .crane-hook-group { animation: lift-box 4s ease-in-out infinite; }
+
+        /* CSS Khusus Simulasi (Slide 2) */
+        .sim-container { position: relative; background: #f1f5f9; border-radius: 0.5rem; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; flex: 1; min-h-0; }
+        #simCanvas { display: block; width: 100%; flex: 1; cursor: grab; }
+        #simCanvas:active { cursor: grabbing; }
+        .energy-bar-container { display: flex; gap: 1rem; align-items: flex-end; height: 110px; padding: 0.75rem 1rem; background: white; border-top: 1px solid var(--border); }
+        .e-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+        .e-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.1s linear; position: relative; }
+        .e-bar span { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; font-weight: bold; white-space: nowrap; }
+
+        @media(max-width:768px) { .slide{padding:1.25rem 1rem 2rem} .formula-box{font-size:1.5rem;padding:0.75rem 1.25rem} .profile-img{width:140px;height:140px} .top-nav .logo-area span{display:none} }
+        @media(prefers-reduced-motion:reduce) { .slide{transition:opacity 0.2s;transform:none!important} .slide.active{transform:none!important} .float-anim{animation:none} .crane-hook-group{animation:none} }
+          
+        @media print {
+            .top-nav, .progress-bar { display: none !important; }
+            body { overflow: visible !important; height: auto !important; width: 100% !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
+            .slide-area { position: static !important; overflow: visible !important; height: auto !important; width: 100% !important; }
+            .slide { position: relative !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; width: 100% !important; height: auto !important; min-height: 90vh !important; page-break-after: always; page-break-inside: avoid; margin: 0 auto !important; padding: 2rem 3rem !important; box-sizing: border-box !important; box-shadow: none !important; border: none !important; overflow: visible !important; background-color: white !important; }
+            .anim-up, .anim-up-d1, .anim-up-d2, .anim-up-d3, .anim-up-d4 { opacity: 1 !important; animation: none !important; transform: none !important; }
+            .float-anim { animation: none !important; }
+            .card { box-shadow: none !important; break-inside: avoid; }
+            canvas, img, svg { max-width: 100% !important; height: auto !important; }
+            .discussion-box { max-height: none !important; opacity: 1 !important; margin-top: 1rem !important; padding: 1rem !important; }
+            .reveal-btn { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Navigasi slide">
+    <div class="logo-area">
+        <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI">
+        <span>Politeknik ATMI Surakarta</span>
+    </div>
+    <div class="nav-center" id="navDots"></div>
+    <button class="nav-btn" onclick="prevSlide()" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="slide-counter" id="slideCounter">1 / 4</span>
+    <button class="nav-btn" onclick="nextSlide()" aria-label="Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
+</nav>
+<div class="progress-bar" id="progressBar" style="width:25%"></div>
+
+<div class="slide-area">
+
+<!-- ================= SLIDE 0: COVER ================= -->
+<section class="slide active" id="slide0">
+    <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
+        <div class="flex items-center gap-6 mb-6 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:320px;width:320px;object-fit:contain;border-radius:8px;">
+            <div>
+                <div class="text-xl font-bold" style="color:var(--accent);">Politeknik ATMI Surakarta</div>
+                <div class="text-base" style="color:var(--muted);">Teknik Mesin Industri</div>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-center mb-4 anim-up-d1" style="color:var(--accent);">Energi Potensial &<br>Kekekalan Energi</h1>
+        <p class="text-xl md:text-2xl text-center max-w-2xl mb-6 anim-up-d2" style="color:var(--muted);line-height:1.7;">Memahami energi yang tersimpan oleh kedudukan, konfigurasi, dan prinsip kekekalan energi mekanik dalam suatu sistem.</p>
+        
+        <div class="card p-6 mb-8 max-w-3xl w-full anim-up-d3" style="border-left:4px solid var(--accent-mec); background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(5,150,105,0.04));">
+            <div class="text-left">
+                <h3 class="text-xl font-bold mb-4" style="color:var(--accent);">Learning Outcomes (Bab 8)</h3>
+                <p class="text-base mb-4 font-medium" style="color:var(--fg);">Setelah mempelajari bab ini, mahasiswa diharapkan mampu:</p>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent-pe); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Membedakan gaya konservatif dan gaya non-konservatif</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent-pe); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menghitung energi potensial gravitasi ($U_g$) dan elastis ($U_s$)</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent-mec); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menerapkan prinsip kekekalan energi mekanik ($E_{mec} = K + U$)</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent-ke); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menghitung usaha oleh gaya eksternal dan energi panas akibat gesekan</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6 mb-8 anim-up-d4">
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0s; border-bottom: 3px solid var(--accent-pe);"><div class="text-3xl font-black" style="color:var(--accent-pe);">$U$</div><div class="text-sm mt-1" style="color:var(--muted);">Potensial</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.4s; border-bottom: 3px solid var(--accent-mec);"><div class="text-3xl font-black" style="color:var(--accent-mec);">$E_{mec}$</div><div class="text-sm mt-1" style="color:var(--muted);">Mekanik</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.8s; border-bottom: 3px solid var(--accent-ke);"><div class="text-3xl font-black" style="color:var(--accent-ke);">$K$</div><div class="text-sm mt-1" style="color:var(--muted);">Kinetik</div></div>
+        </div>
+        
+        <div class="card p-5 flex items-center gap-5 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Foto Dosen" class="w-36 h-36 rounded-lg object-cover" style="border:2px solid var(--border); object-position: top center;">
+            <div><div class="font-bold text-lg">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div><div class="text-base" style="color:var(--muted);">Fisika Dasar &mdash; Semester 2, 2 SKS</div></div>
+        </div>
+        <p class="mt-8 text-sm" style="color:var(--muted);"><i class="fa-solid fa-arrow-right mr-1"></i> Tekan panah kanan atau swipe untuk melanjutkan</p>
+    </div>
+</section>
+
+<!-- ================= SLIDE 1: PROFIL DOSEN ================= -->
+<section class="slide" id="slide1">
+    <div class="max-w-4xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(79,70,229,0.1);color:var(--accent-mec);">Profil Dosen</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Dosen Pengampu</h2>
+        <div class="card p-6 md:p-8 anim-up-d2">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Ir. Fidelis Gigih Triatmaja" class="profile-img">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold mb-2">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</h3>
+                    <p class="text-base mb-5" style="color:var(--muted);">Dosen Fisika Dasar &mdash; Politeknik ATMI Surakarta</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-envelope w-5 text-center" style="color:var(--accent-mec);font-size:1.1rem;"></i><span>fidelis.gigih@atmi.ac.id</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-phone w-5 text-center" style="color:var(--accent-mec);font-size:1.1rem;"></i><span>0812 7161 2910</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-building w-5 text-center" style="color:var(--accent-mec);font-size:1.1rem;"></i><span>Kantor: Lab WAP &ndash; TMI</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-clock w-5 text-center" style="color:var(--accent-mec);font-size:1.1rem;"></i><span>08.00 &ndash; 17.00 WIB</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card p-6 mt-4 anim-up-d3">
+            <div class="flex items-center gap-3 mb-4"><i class="fa-solid fa-calendar-days text-xl" style="color:var(--accent-mec);"></i><span class="font-semibold text-lg">Jadwal Kuliah</span></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Hari</div><div style="color:var(--muted);">Kamis &amp; Jumat</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Waktu</div><div style="color:var(--muted);">08.30 &ndash; 11.20 WIB</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Kode MK</div><div style="color:var(--muted);">FISIKA DASAR-IPPD 1.1.5</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">SKS</div><div style="color:var(--muted);">Semester 2 &ndash; 2 SKS</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 2: THE BIG QUESTION (LAYOUT ANTI-STRETCH) ================= -->
+<section class="slide" id="slide2">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(5,150,105,0.1);color:var(--accent-pe);">Pendahuluan</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Apa Bahasan di Bab Ini?</h2>
+        
+        <!-- PENGGUNAAN items-start agar grid tidak dipaksa membesar oleh tetangga -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+            
+            <!-- Kiri: Simulasi Interaktif (Tinggi Tetap) -->
+            <div class="md:col-span-3 card p-0 overflow-hidden anim-up-d2 flex flex-col h-[480px]">
+                <div class="p-3 text-center font-bold text-base border-b" style="background:rgba(79,70,229,0.05); color:var(--accent-mec);">
+                    <i class="fa-solid fa-flask-vial mr-2"></i>Simulasi: Jatuh Bebas (Tarik balok lalu lepaskan!)
+                </div>
+                <div class="sim-container">
+                    <canvas id="simCanvas"></canvas>
+                    <div class="energy-bar-container">
+                        <div class="e-bar-wrap"><div class="e-bar" id="barUg" style="height:0%; background:var(--accent-pe);"><span id="valUg">0 J</span></div><div class="text-xs mt-1 font-bold" style="color:var(--accent-pe);">$U_g$</div></div>
+                        <div class="e-bar-wrap"><div class="e-bar" id="barK" style="height:0%; background:var(--accent-ke);"><span id="valK">0 J</span></div><div class="text-xs mt-1 font-bold" style="color:var(--accent-ke);">$K$</div></div>
+                        <div class="e-bar-wrap"><div class="e-bar" id="barEmec" style="height:100%; background:var(--accent-mec);"><span id="valEmec">0 J</span></div><div class="text-xs mt-1 font-bold" style="color:var(--accent-mec);">$E_{mec}$</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Konsep Dasar (Bisa Membesar Bebas) -->
+            <div class="md:col-span-2 card p-6 anim-up-d3 flex flex-col" style="border-top: 4px solid var(--accent-pe);">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(5,150,105,0.1);"><i class="fa-solid fa-atom" style="color:var(--accent-pe);"></i></div>
+                    <h3 class="text-xl font-bold">Identifikasi Energi</h3>
+                </div>
+                <p class="text-base mb-4" style="color:var(--muted);">Salah satu "tugas" fisika adalah mengidentifikasi jenis-jenis energi di dunia. Salah satu jenis energi umum tersebut adalah <strong style="color:var(--accent-pe);">Energi Potensial ($U$)</strong>.</p>
+                
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Pertanyaan Kunci</span>
+                    </div>
+                    <p class="mt-3 text-base" style="color:var(--fg);">Ketika benda melambat dan berhenti, kemana perginya Energi Kinetik?</p>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Konsep</button>
+                    <div class="discussion-box">
+                        Energi tersebut tidak hilang! Ia hanya <strong>"berpindah server"</strong> menjadi bentuk energi lain, yaitu <strong style="color:var(--accent-pe);">Energi Potensial</strong>. Energi potensial adalah energi yang diasosiasikan dengan <em>konfigurasi</em> (susunan/kedudukan) suatu sistem di mana gaya konservatif bekerja.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 3: KERJA & PERUBAHAN ENERGI POTENSIAL ================= -->
+<section class="slide" id="slide3">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent-ke);">Hubungan Dasar</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-8 anim-up-d1">Kerja (Work) & Perubahan Energi Potensial</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+            <!-- Kiri: Ilustrasi Derek SVG (Diperbesar) -->
+            <div class="md:col-span-2 card p-6 flex flex-col items-center justify-center anim-up-d2" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);">
+                <div class="text-center mb-4 font-bold text-lg">Ilustrasi Derek Angkat</div>
+                <!-- ViewBox dan ukuran disesuaikan agar lebih besar dan flesibel -->
+                <svg viewBox="0 0 300 350" class="w-full max-w-[300px] h-auto" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Struktur Derek -->
+                    <rect x="40" y="20" width="15" height="300" fill="#334155" rx="2"/> 
+                    <rect x="55" y="30" width="120" height="10" fill="#475569" rx="2"/> 
+                    <rect x="25" y="320" width="50" height="15" fill="#334155" rx="2"/>
+                    
+                    <!-- Tali Penyangga -->
+                    <line x1="55" y1="35" x2="175" y2="35" stroke="#64748b" stroke-width="3"/>
+                    
+                    <!-- Kelompok Kait & Balok yang Bergerak (Animasi) -->
+                    <g class="crane-hook-group">
+                        <!-- Tali -->
+                        <line x1="165" y1="35" x2="165" y2="140" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 3"/>
+                        <!-- Kait -->
+                        <path d="M165,140 Q165,165 145,165 Q125,165 125,140" fill="none" stroke="#334155" stroke-width="4"/>
+                        <!-- Balok Baja -->
+                        <rect x="100" y="170" width="80" height="60" fill="#1e293b" rx="5"/>
+                        <text x="140" y="207" font-family="sans-serif" font-size="22" fill="white" text-anchor="middle" font-weight="bold">m</text>
+                    </g>
+
+                    <!-- Keterangan Panah & Teks -->
+                    <!-- Panah Naik -->
+                    <path d="M220,110 L220,70 L200,90 Z" fill="#059669"/>
+                    <text x="230" y="100" font-family="sans-serif" font-weight="bold" font-size="18" fill="#059669">Naik</text>
+                    <text x="230" y="120" font-family="sans-serif" font-size="15" fill="#059669">Wg < 0</text>
+
+                    <!-- Panah Turun -->
+                    <path d="M220,220 L220,260 L200,240 Z" fill="#dc2626"/>
+                    <text x="230" y="235" font-family="sans-serif" font-weight="bold" font-size="18" fill="#dc2626">Turun</text>
+                    <text x="230" y="255" font-family="sans-serif" font-size="15" fill="#dc2626">Wg > 0</text>
+                </svg>
+            </div>
+
+            <!-- Kanan: Penjelasan Rumus (3 Kolom) -->
+            <div class="md:col-span-3 space-y-4 anim-up-d3">
+                <div class="card p-5">
+                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-up" style="color:var(--accent-pe);"></i> Saat Balok Naik (Derek Mengangkat)</h3>
+                    <p class="text-base" style="color:var(--muted);">Gaya gravitasi melakukan usaha <strong>negatif</strong> pada balok. Energi dipindahkan dari Kinetik (oleh derek) ke Potensial.</p>
+                    <div class="math-block math-block-pe mt-2">
+                        $$ W_g < 0 \implies \Delta U > 0 \text{ (Bertambah)} $$                     </div>
+                </div>
+
+                <div class="card p-5">
+                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-down" style="color:var(--accent-ke);"></i> Saat Balok Turun (Derek Menurunkan)</h3>
+                    <p class="text-base" style="color:var(--muted);">Gaya gravitasi melakukan usaha <strong>positif</strong> pada balok. Energi dipindahkan dari Potensial ke Kinetik.</p>
+                    <div class="math-block math-block-ke mt-2">
+                        $$ W_g > 0 \implies \Delta U < 0 \text{ (Berkurang)} $$                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 4: GAYA KONSERVATIF VS NON-KONSERVATIF ================= -->
+<section class="slide" id="slide4">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(79,70,229,0.1);color:var(--accent-mec);">Klasifikasi Gaya</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Gaya Konservatif vs Non-Konservatif</h2>
+        
+        <!-- Intro Card: Penjelasan Esensi -->
+        <div class="card p-5 mb-6 anim-up-d2" style="border-left: 4px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.05), #ffffff);">
+            <p class="text-lg" style="color:var(--fg);">
+                <i class="fa-solid fa-circle-question mr-2" style="color:var(--accent-mec);"></i>
+                <strong>Apa maksud kata "Konservatif" di sini?</strong> Istilah ini berasal dari kata <em>conserve</em> (menjaga/melestarikan). Gaya konservatif adalah gaya yang <strong style="color:var(--accent-pe);">menjaga energi mekanik</strong> suatu sistem agar tidak hilang, melainkan hanya disimpan sementara.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Kiri: Konservatif (Penjelasan Mendalam) -->
+            <div class="card p-6 anim-up-d3" style="border-top: 4px solid var(--accent-pe);">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(5,150,105,0.1);"><i class="fa-solid fa-piggy-bank text-xl" style="color:var(--accent-pe);"></i></div>
+                    <h3 class="text-2xl font-bold" style="color:var(--accent-pe);">Konservatif</h3>
+                </div>
+                
+                <div class="mb-4 p-4 rounded-lg" style="background:rgba(5,150,105,0.05);">
+                    <h4 class="font-bold mb-2 text-base" style="color:var(--accent-pe);">Analogi: Rekening Tabungan Sempurna</h4>
+                    <p class="text-base" style="color:var(--muted);">Bayangkan Anda menarik uang (energi kinetik berkurang) dan menabungkannya (menjadi energi potensial). Saat Anda tarik lagi tabungannya, saldo uang Anda kembali <strong>utuh 100%</strong>. Tidak ada biaya admin atau uang yang hilang.</p>
+                </div>
+
+                <h4 class="font-bold mb-2 text-base">Ciri Fisik Sebenarnya:</h4>
+                <ul class="space-y-3 mb-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check-circle mt-1" style="color:var(--accent-pe);"></i><span class="text-base"><strong>Uji Pulang-Pergi:</strong> Jika benda bergerak keluar lalu kembali ke titik awal, usaha total oleh gaya ini = <strong>Nol</strong>.</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check-circle mt-1" style="color:var(--accent-pe);"></i><span class="text-base"><strong>Bebas Pilih Jalan:</strong> Usaha dari titik A ke B <strong>tidak bergantung jalur</strong> yang ditempuh (boleh lurus, boleh berkelok, hasilnya sama).</span></li>
+                </ul>
+
+                <div class="p-3 rounded-lg text-sm" style="background:rgba(5,150,105,0.1); color:var(--accent-pe);">
+                    <strong>Contoh:</strong> Gravitasi (berat) & Gaya Pegas
+                </div>
+            </div>
+
+            <!-- Kanan: Non-Konservatif (Penjelasan Mendalam) -->
+            <div class="card p-6 anim-up-d4" style="border-top: 4px solid var(--accent-th);">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(249,115,22,0.1);"><i class="fa-solid fa-money-bill-transfer text-xl" style="color:var(--accent-th);"></i></div>
+                    <h3 class="text-2xl font-bold" style="color:var(--accent-th);">Non-Konservatif</h3>
+                </div>
+                
+                <div class="mb-4 p-4 rounded-lg" style="background:rgba(249,115,22,0.05);">
+                    <h4 class="font-bold mb-2 text-base" style="color:var(--accent-th);">Analogi: Dompet Bocor</h4>
+                    <p class="text-base" style="color:var(--muted);">Saat Anda berjalan, uang (energi) terus berceceran jatuh ke jalanan menjadi panas/suara. Meskipun Anda kembali ke rumah (titik awal), uang yang sudah jatuh <strong>tidak bisa diambil lagi</strong>. Energi mekanik Anda berkurang.</p>
+                </div>
+
+                <h4 class="font-bold mb-2 text-base">Ciri Fisik Sebenarnya:</h4>
+                <ul class="space-y-3 mb-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-times-circle mt-1" style="color:var(--accent-th);"></i><span class="text-base"><strong>Uji Pulang-Pergi:</strong> Jika benda bergerak keluar lalu kembali ke titik awal, usaha total oleh gaya ini <strong>Tidak Nol</strong> (selalu negatif, karena energi terkuras).</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-times-circle mt-1" style="color:var(--accent-th);"></i><span class="text-base"><strong>Tergantung Jalan:</strong> Usaha dari A ke B <strong>sangat bergantung pada jalur</strong> (makin jauh/jumlah belok makin banyak, makin banyak energi yang terbuang).</span></li>
+                </ul>
+
+                <div class="p-3 rounded-lg text-sm" style="background:rgba(249,115,22,0.1); color:var(--accent-th);">
+                    <strong>Contoh:</strong> Gaya Gesek Kinetik & Hambatan Udara
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 5: PATH INDEPENDENCE (INTEGRATED) ================= -->
+<section class="slide" id="slide5">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(5,150,105,0.1);color:var(--accent-pe);">Sifat Istimewa</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Path Independence: Apakah Jalur Penting?</h2>
+        
+        <!-- Intro Card -->
+        <div class="card p-5 mb-6 anim-up-d2" style="border-left: 4px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.05), #ffffff);">
+            <p class="text-lg" style="color:var(--fg);">
+                <i class="fa-solid fa-map-signs mr-2" style="color:var(--accent-mec);"></i>
+                Kita tahu usaha $W = F \cdot d$. Tapi apakah <strong>bentuk jalur (lintasan)</strong> yang dipilih mempengaruhi besar usaha dan energi akhirnya? Ternyata jawabannya <strong>bergantung pada jenis gayanya</strong>!
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+            <!-- Kiri: Penjelasan Teori (2 Kolom) -->
+            <div class="md:col-span-2 space-y-5 anim-up-d3">
+                
+                <!-- Kartu Konservatif -->
+                <div class="card p-5" style="border-top: 4px solid var(--accent-pe);">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(5,150,105,0.1);"><i class="fa-solid fa-arrow-down-long text-lg" style="color:var(--accent-pe);"></i></div>
+                        <h3 class="text-xl font-bold" style="color:var(--accent-pe);">Konservatif (Gravitasi)</h3>
+                    </div>
+                    <p class="text-base" style="color:var(--muted);"><strong>Jalur TIDAK pengaruh!</strong> Gravitasi hanya peduli pada <strong>perubahan ketinggian vertikal ($\Delta y$)</strong>. Mau jatuh bebas lurus ke bawah, atau meluncur perlahan di bidang miring, usahanya <strong>sama saja</strong>.</p>
+                </div>
+
+                <!-- Kartu Non-Konservatif -->
+                <div class="card p-5" style="border-top: 4px solid var(--accent-th);">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(249,115,22,0.1);"><i class="fa-solid fa-road text-lg" style="color:var(--accent-th);"></i></div>
+                        <h3 class="text-xl font-bold" style="color:var(--accent-th);">Non-Konservatif (Gesekan)</h3>
+                    </div>
+                    <p class="text-base" style="color:var(--muted);"><strong>Jalur SANGAT pengaruh!</strong> Gesekan bergantung pada <strong>jarak tempuh ($d$)</strong>. Semakin panjang/melinier jalurnya, semakin banyak energi mekanik yang terkuras menjadi panas.</p>
+                </div>
+
+                <!-- Highlight Rumus Dasar -->
+                <div class="space-y-3">
+                    <div class="math-block math-block-pe text-center" style="margin:0; font-size:1.2rem;">
+                        Energi Potensial: $$ U_g = mgh $$                     </div>
+                    <div class="math-block math-block-ke text-center" style="margin:0; font-size:1.2rem;">
+                        Energi Kinetik: $$ K = \frac{1}{2}mv^2 $$                     </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Studi Kasus Gambar (3 Kolom) -->
+            <div class="md:col-span-3 card p-0 overflow-hidden anim-up-d4 flex flex-col">
+                <div class="p-3 text-center font-bold text-base border-b" style="background:rgba(5,150,105,0.05); color:var(--accent-pe);">
+                    <i class="fa-solid fa-water mr-2"></i>Studi Kasus: Perosotan Air (Water Slide)
+                </div>
+                <div class="p-4 flex justify-center" style="background: #1e293b;">
+                    <!-- Alamat gambar mengarah ke drive lokal Anda -->
+                    <img src="gambar/kekekalan-energi/gambar-6.19.png" alt="Figure 6.19 Water Slides" class="w-full max-w-lg h-auto rounded-lg shadow-lg">
+                </div>
+                <div class="p-4" style="background: #f8fafc;">
+                    <p class="text-sm mb-2" style="color:var(--muted);"><strong>Fig 6-19:</strong> Paul dan Corinne mulai dari puncak dengan ketinggian $h$ yang sama, namun perosotannya berbeda bentuk.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULASI INTERAKTIF TERINTEGRASI (DIPERBESAR) -->
+        <div class="card p-0 overflow-hidden mt-6 anim-up-d5 flex flex-col">
+            <div class="p-3 text-center font-bold text-base border-b flex items-center justify-center gap-2" style="background:rgba(79,70,229,0.05); color:var(--accent-mec);">
+                <i class="fa-solid fa-flask-vial"></i>
+                <span>Buktikan Sendiri: Simulasi Perosotan (Ubah ketinggian dan lihat hasilnya!)</span>
+            </div>
+            
+            <div class="flex flex-col md:flex-row">
+                <!-- Canvas Area (Diperbesar) -->
+                <div class="flex-1 bg-slate-100 p-3 flex justify-center items-center min-h-[400px]">
+                    <canvas id="simCanvasSlide5" width="800" height="450" class="bg-white rounded-lg shadow-inner w-full max-w-[800px]" style="border:1px solid var(--border);"></canvas>
+                </div>
+
+                <!-- Control Panel -->
+                <div class="w-full md:w-64 p-4 border-l bg-slate-50 flex flex-col justify-center gap-4" style="border-color: var(--border);">
+                    <div>
+                        <label for="heightInput" class="block text-sm font-semibold mb-1">Ketinggian Awal (h)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="heightInput" value="20" min="1" max="100" class="w-full p-2 border rounded-md text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" style="border-color:var(--border);">
+                            <span class="font-semibold text-gray-500">m</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="startSimulationSlide5()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-play"></i> Mulai Simulasi
+                    </button>
+
+                    <div class="p-3 bg-white rounded-md border text-sm" style="border-color:var(--border);">
+                        <p class="font-semibold mb-2 text-gray-700">Hasil Perhitungan:</p>
+                        <div class="space-y-1 font-mono text-sm">
+                            <div class="flex justify-between items-center">
+                                <span style="color:var(--accent-pe);">PE max:</span>
+                                <span id="peMaxText" class="font-bold">0 J</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span style="color:var(--accent-ke);">KE akhir:</span>
+                                <span id="keMaxText" class="font-bold">0 J</span>
+                            </div>
+                            <hr class="my-1">
+                            <div class="flex justify-between items-center">
+                                <span style="color:var(--accent-mec);">v akhir:</span>
+                                <span id="velocityText" class="font-bold">0 m/s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keterangan Turunan Rumus -->
+                    <div class="p-3 rounded-md border text-xs" style="border-color: rgba(79,70,229,0.2); background: rgba(79,70,229,0.03);">
+                        <p class="font-semibold mb-1" style="color:var(--accent-mec);">Mengapa $v = \sqrt{2gh}$?</p>
+                        <div style="font-size: 0.85rem; color: var(--fg);">
+                            $$ mgh = \frac{1}{2}mv^2 $$                             $$ gh = \frac{1}{2}v^2 $$                             $$ v = \sqrt{2gh} $$                         </div>
+                        <p style="color:var(--accent-ke); font-size:0.75rem; margin-top:4px;"><strong>Penting:</strong> Massa ($m$) dicoret! Artinya, kecepatan jatuh tidak bergantung pada massa benda, hanya ketinggian!</p>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500 text-center italic">Asumsi: g = 9.8 m/s², Tanpa gesekan.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pertanyaan Konseptual Interaktif -->
+        <div class="card p-5 mt-6 anim-up-d6" style="border-left: 4px solid var(--accent-ke);">
+            <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-bolt" style="color:var(--accent-ke);"></i> Fakta Fisika Yang Terjadi</h3>
+            
+            <div class="prompt-wrapper">
+                <div class="prompt-header">
+                    <div class="prompt-icon">?</div>
+                    <span class="font-semibold">Pertanyaan Konseptual</span>
+                </div>
+                <p class="mt-3 text-base" style="color:var(--fg);">Di dasar perosotan, siapa yang kecepatannya lebih besar saat menyentuh air: Paul atau Corinne?</p>
+                <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Fakta</button>
+                <div class="discussion-box">
+                    Kecepatan mereka adalah <strong>SAMA!</strong> Karena gravitasi bersifat konservatif (Path Independence), semua Energi Potensial ($mgh$) diubah menjadi Energi Kinetik ($\frac{1}{2}mv^2$). Karena ketinggian awal $h$ sama, maka kecepatan $v$ di dasar pasti sama. <strong>Bentuk perosotan (jalur) tidak mengubah kecepatan akhir!</strong> <br><br><em>(Catatan: Corinne memang sampai di bawah lebih dulu karena di awal perosotannya lebih curam, sehingga ia lebih cepat mengubah PE-nya jadi KE. Tapi saat di dasar, kecepatan akhir keduanya tetap sama).</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 6: ENERGI POTENSIAL ELASTIS ================= -->
+<section class="slide" id="slide7">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(5,150,105,0.1);color:var(--accent-pe);">Rumus Dasar</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Energi Potensial Elastis ($U_s$)</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6">
+            <!-- Kiri: Hukum Hooke & Gambar Pegas -->
+            <div class="space-y-4 anim-up-d2">
+                <div class="math-block text-center" style="margin:0; font-size:1.2rem; border-left-color: var(--accent-th);">
+                    Hukum Hooke (Gaya Pegas): $$ F_s = -kx $$                 </div>
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-3 text-center font-bold text-sm border-b bg-slate-50">Gambar 6-14: Arah gaya pegas berlawanan dengan perpindahan</div>
+                    <div class="p-3 flex justify-center" style="background: #1e293b;">
+                        <img src="gambar/kekekalan-energi/gambar-6.14.png" alt="Figure 6.14 Spring Force" class="w-full max-w-sm h-auto rounded-lg shadow-lg">
+                    </div>
+                    <div class="p-3 text-xs" style="background: #f8fafc; color:var(--muted);">Tangan meregangkan pegas ke kanan ($x > 0$), pegas menarik ke kiri ($F < 0$). Tangan mendorong ke kiri ($x < 0$), pegas mendorong ke kanan ($F > 0$).</div>
+                </div>
+            </div>
+
+            <!-- Kanan: Pembuktian Visual (Grafik) -->
+            <div class="space-y-4 anim-up-d3">
+                <div class="card p-5" style="border-left: 4px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.05), #ffffff);">
+                    <h3 class="text-lg font-bold mb-2">Dari mana rumus $U_s$ berasal?</h3>
+                    <p class="text-base mb-3" style="color:var(--muted);">Energi potensial pegas sama dengan <strong>usaha yang kita lakukan untuk meregangkan/menekan pegas</strong> tersebut. Karena gaya $F$ tidak konstan, usaha = Luas area di bawah kurva $F$ vs $x$.</p>
+                    <div class="math-block text-center" style="margin:0; font-size:1rem;">
+                        $$ W = \text{Luas Segitiga} = \frac{1}{2} \cdot \text{alas} \cdot \text{tinggi} $$                         $$ W = \frac{1}{2} \cdot x \cdot (kx) = \frac{1}{2} kx^2 $$                     </div>
+                </div>
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-3 text-center font-bold text-sm border-b bg-slate-50">Gambar 6-15: Grafik Gaya vs Posisi (Luas = Energi)</div>
+                    <div class="p-3 flex justify-center" style="background: #1e293b;">
+                        <img src="gambar/kekekalan-energi/gambar-6.15.png" alt="Figure 6.15 F vs x Graph" class="w-full max-w-xs h-auto rounded-lg shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rumus Utama & Contoh Soal Bawah -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- Rumus Highlight -->
+            <div class="formula-box text-center w-full anim-up-d4" style="color: var(--accent-pe); font-size: 2rem; border-color: var(--accent-pe); background: linear-gradient(135deg, rgba(5,150,105,0.08), #ffffff);">
+                $$ U_s = \frac{1}{2}kx^2 $$                 <div class="text-sm font-normal mt-1" style="color:var(--muted);">Energi Potensial Elastis (Pegas)</div>
+            </div>
+
+            <!-- Contoh Soal Dart Gun -->
+            <div class="card p-5 anim-up-d5" style="border-top: 4px solid var(--accent-mec);">
+                <h3 class="text-xl font-bold mb-3" style="color:var(--accent-mec);">Contoh Kasus: Mainan Dart Gun</h3>
+                <p class="text-base mb-4" style="color:var(--muted);">Pegas pada mainan dart gun memiliki konstanta $k = 250 \text{ N/m}$. Pegas ditekan sejauh $x = 6 \text{ cm}$. Berapa energi potensial yang tersimpan?</p>
+                
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Hitung Energi Potensial Pegas!</span>
+                    </div>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Pembahasan</button>
+                    <div class="discussion-box text-sm leading-relaxed">
+                        <p class="mb-2"> Konstanta $k$ menggunakan satuan N/m (Newton/meter), sehingga $x$ juga harus dalam meter.</p>
+                        $$ x = 6 \text{ cm} = 0{,}06 \text{ m} $$                         $$ U_s = \frac{1}{2}kx^2 $$                         $$ U_s = \frac{1}{2}(250 \text{ N/m})(0{,}06 \text{ m})^2 $$                         $$ U_s = 125 \times 0{,}0036 \text{ m}^2 = 0{,}45 \text{ Joule} $$                         <p class="mt-3 text-xs font-bold p-2 rounded" style="background:rgba(220,38,38,0.1); color:var(--accent-ke);"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Peringatan: Jika Anda lupa mengkonversi cm ke m (dan langsung menghitung $6^2 = 36$), hasilnya akan salah menjadi 4500 Joule! Pastikan satuan SI-nya konsisten.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 7: HUKUM KEKEKALAN ENERGI MEKANIK ================= -->
+<section class="slide" id="slide8">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(79,70,229,0.1);color:var(--accent-mec);">Prinsip Utama</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Hukum Kekekalan Energi Mekanik</h2>
+
+        <!-- Formula Utama (Diperluas Sesuai Permintaan) -->
+        <div class="card p-5 mb-6 anim-up-d2 text-center" style="border: 2px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.06), #ffffff);">
+            <div class="math-block text-center" style="margin:0; border:none; background:transparent; font-size:1.3rem;">
+                $$ E_{M1} = E_{M2} $$                 <div class="my-2 text-sm font-semibold" style="color:var(--muted);">Dijabarkan menjadi:</div>
+                $$ E_{K1} + E_{Pg1} + E_{Pe1} = E_{K2} + E_{Pg2} + E_{Pe2} $$                 <div class="my-2 text-sm font-semibold" style="color:var(--muted);">Secara operasional:</div>
+                $$ \frac{1}{2}mv_1^2 + mgh_1 + \frac{1}{2}kx_1^2 = \frac{1}{2}mv_2^2 + mgh_2 + \frac{1}{2}kx_2^2 $$             </div>
+            <div class="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-semibold" style="color:var(--fg);">
+                <span>$E_{M1}$ = Energi mekanik posisi pertama</span>
+                <span>$E_{M2}$ = Energi mekanik posisi kedua</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+            <!-- Kiri: Penjelasan & Syarat (2 Kolom) -->
+            <div class="md:col-span-2 space-y-5 anim-up-d3">
+                
+                <!-- Syarat Kunci -->
+                <div class="card p-5" style="border-left: 4px solid var(--accent-ke); background: linear-gradient(135deg, rgba(220,38,38,0.03), #ffffff);">
+                    <h3 class="text-lg font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-ke);"></i> Syarat Kunci!</h3>
+                    <p class="text-base" style="color:var(--muted);">Hukum ini <strong>hanya berlaku</strong> jika dua syarat terpenuhi:</p>
+                    <ul class="mt-3 space-y-2 text-base" style="color:var(--fg);">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check-circle mt-1" style="color:var(--accent-pe);"></i><span>Sistem <strong>terisolasi</strong> (Tidak ada gaya luar yang melakukan usaha).</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check-circle mt-1" style="color:var(--accent-pe);"></i><span><strong>Hanya gaya konservatif</strong> yang bekerja di dalam sistem (Tidak ada gesekan/hambatan).</span></li>
+                    </ul>
+                </div>
+
+                <!-- Mengapa Ini Powerful? -->
+                <div class="card p-5" style="border-left: 4px solid var(--accent-mec);">
+                    <h3 class="text-lg font-bold mb-2">Mengapa Ini Powerful?</h3>
+                    <p class="text-base" style="color:var(--muted);">Biasanya untuk mencari kecepatan benda, kita pakai Rumus Kinematika ($v^2 = v_0^2 + 2ad$) yang mensyaratkan gaya/a konstan. Jika lintasan berkelok (seperti roller coaster), rumus itu <strong>gagal total</strong>.</p>
+                    <p class="text-base mt-2 font-semibold" style="color:var(--accent-mec);">Dengan Kekekalan Energi, kita tidak peduli bentuk lintasannya! Kita langsung hubungkan Keadaan 1 dan Keadaan 2.</p>
+                </div>
+            </div>
+
+            <!-- Kanan: Visualisasi Pergeseran Energi (3 Kolom) -->
+            <div class="md:col-span-3 space-y-5 anim-up-d4">
+                
+                <!-- Visualisasi Pergeseran Energi -->
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-3 text-center font-bold text-sm border-b bg-slate-50">Visualisasi Pergeseran Energi (Tanpa Gesekan)</div>
+                    <div class="p-5 grid grid-cols-3 gap-4 text-center">
+                        <!-- Keadaan 1 -->
+                        <div>
+                            <div class="font-bold mb-2 text-sm" style="color:var(--accent-pe);">Keadaan 1 (Puncak)</div>
+                            <div class="w-full h-32 bg-slate-100 rounded-lg relative overflow-hidden border flex flex-col justify-end">
+                                <div style="height:90%; background:var(--accent-pe);" class="flex items-center justify-center text-white font-bold text-xs">Epg = Maks</div>
+                                <div style="height:10%; background:var(--accent-ke);" class="flex items-center justify-center text-white font-bold text-xs">EK</div>
+                            </div>
+                            <div class="mt-2 text-xs font-semibold" style="color:var(--muted);">$v_1 \approx 0$</div>
+                        </div>
+                        <!-- Keadaan 2 -->
+                        <div>
+                            <div class="font-bold mb-2 text-sm" style="color:var(--accent-th);">Keadaan 2 (Tengah)</div>
+                            <div class="w-full h-32 bg-slate-100 rounded-lg relative overflow-hidden border flex flex-col justify-end">
+                                <div style="height:50%; background:var(--accent-pe);" class="flex items-center justify-center text-white font-bold text-xs">Epg</div>
+                                <div style="height:50%; background:var(--accent-ke);" class="flex items-center justify-center text-white font-bold text-xs">EK</div>
+                            </div>
+                            <div class="mt-2 text-xs font-semibold" style="color:var(--muted);">$v_2 = medium$</div>
+                        </div>
+                        <!-- Keadaan 3 -->
+                        <div>
+                            <div class="font-bold mb-2 text-sm" style="color:var(--accent-ke);">Keadaan 3 (Dasar)</div>
+                            <div class="w-full h-32 bg-slate-100 rounded-lg relative overflow-hidden border flex flex-col justify-end">
+                                <div style="height:10%; background:var(--accent-pe);" class="flex items-center justify-center text-white font-bold text-xs">Epg</div>
+                                <div style="height:90%; background:var(--accent-ke);" class="flex items-center justify-center text-white font-bold text-xs">EK = Maks</div>
+                            </div>
+                            <div class="mt-2 text-xs font-semibold" style="color:var(--muted);">$v_3 = maks$</div>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-4 text-center text-xs font-bold" style="color:var(--accent-mec);">Total Tinggi Batang (EK + Epg) selalu SAMA $\rightarrow E_M$ Konstan!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contoh Soal Interaktif dengan Visualisasi -->
+        <div class="card p-5 mt-6 anim-up-d5" style="border-left: 4px solid var(--accent-mec);">
+            <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-bolt" style="color:var(--accent-mec);"></i> Contoh Kasus: Water Slide Bebas Gesekan</h3>
+            <p class="text-base mb-4" style="color:var(--muted);">Seorang anak bermassa $m$ dilepaskan dari atas perosotan (ketinggian $h_1 = 8{,}5 \text{ m}$) dengan kecepatan awal nol. Jika perosotan licin, berapa kecepatan anak saat sampai di dasar?</p>
+            
+            <div class="prompt-wrapper">
+                <div class="prompt-header">
+                    <div class="prompt-icon">?</div>
+                    <span class="font-semibold">Gunakan $E_{M1} = E_{M2}$ untuk membuktikan!</span>
+                </div>
+                
+                <!-- Visualisasi SVG Sederhana -->
+                <div class="flex justify-center my-4">
+                    <svg viewBox="0 0 200 150" class="w-full max-w-[250px] h-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Lintasan Perosotan -->
+                        <path d="M30,20 Q80,60 170,140" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Garis Ketinggian -->
+                        <line x1="30" y1="20" x2="30" y2="140" stroke="#059669" stroke-width="1.5" stroke-dasharray="4 3"/>
+                        <text x="12" y="85" font-size="11" fill="#059669" font-weight="bold" transform="rotate(-90 12,85)">h₁ = 8.5 m</text>
+                        <!-- Titik 1 (Puncak) -->
+                        <circle cx="30" cy="20" r="6" fill="#4f46e5"/>
+                        <text x="42" y="24" font-size="13" fill="#1e293b" font-weight="bold">1 (v₁=0)</text>
+                        <!-- Titik 2 (Dasar) -->
+                        <circle cx="170" cy="140" r="6" fill="#dc2626"/>
+                        <text x="120" y="125" font-size="13" fill="#1e293b" font-weight="bold">2 (v₂=? )</text>
+                        <!-- Garis Dasar -->
+                        <line x1="10" y1="140" x2="190" y2="140" stroke="#1e293b" stroke-width="2"/>
+                        <text x="150" y="148" font-size="9" fill="#64748b">h₂ = 0</text>
+                    </svg>
+                </div>
+
+                <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Pembahasan</button>
+                <div class="discussion-box text-sm leading-relaxed">
+                    <p class="mb-2"><strong>Keadaan 1 (Puncak):</strong> $v_1 = 0$, $h_1 = 8{,}5 \text{ m}$, Tidak ada pegas ($x_1=0$).</p>
+                    $$ E_{K1} = 0 \quad ; \quad E_{Pg1} = mgh_1 \quad ; \quad E_{Pe1} = 0 $$                     <p class="mt-3 mb-2"><strong>Keadaan 2 (Dasar):</strong> $h_2 = 0$, $v_2 = ?$</p>
+                    $$ E_{K2} = \frac{1}{2}mv_2^2 \quad ; \quad E_{Pg2} = 0 \quad ; \quad E_{Pe2} = 0 $$                     <p class="mt-3 mb-2"><strong>Terapkan Kekekalan Energi Mekanik:</strong></p>
+                    $$ 0 + mgh_1 + 0 = \frac{1}{2}mv_2^2 + 0 + 0 $$                     <p class="mt-2">Massa $m$ dicoret di kedua sisi!</p>
+                    $$ gh_1 = \frac{1}{2}v_2^2 \implies v_2 = \sqrt{2gh_1} $$                     <p class="mt-2">Ini persis sama dengan rumus turunan di Slide 5! Kita tidak perlu tahu bentuk perosotannya.</p>
+                    $$ v_2 = \sqrt{2(9{,}8)(8{,}5)} = \sqrt{166{,}6} \approx 12{,}9 \text{ m/s} $$                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 8: ENERGI PANAS DARI FRIKSI ================= -->
+<section class="slide" id="slide9">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent-th);">Non-Konservatif</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Energi Panas dari Friksi</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6">
+            <!-- Kiri: Penjelasan Konsep (Sesuai F.Gigih) -->
+            <div class="space-y-4 anim-up-d2">
+                <div class="card p-5" style="border-left: 4px solid var(--accent-th); background: linear-gradient(135deg, rgba(249,115,22,0.03), #ffffff);">
+                    <p class="text-base" style="color:var(--fg);">Perhatikan contoh seorang pria yang mendorong sebuah kotak melintasi lantai kasar dengan kecepatan konstan. Karena gaya gesekan <strong>tidak konservatif</strong>, usaha yang dilakukan <strong>tidak disimpan</strong> sebagai energi potensial.</p>
+                    <p class="text-base mt-3" style="color:var(--fg);">Semua kerja yang dilakukan oleh gaya gesek menghasilkan transfer energi menjadi <strong style="color:var(--accent-th);">energi panas</strong> dari sistem lantai & kotak. Energi panas ini mengalir sebagai panas di dalam kotak dan lantai, yang akhirnya menaikkan suhu kedua benda tersebut.</p>
+                </div>
+
+                <!-- Gambar Orang Dorong Kotak -->
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-3 flex justify-center bg-slate-50">
+                        <img src="https://z-cdn-media.chatglm.cn/files/8f5e9147-3d78-40b6-a72f-fc058cf906c1.png?auth_key=1879354198-e50e6bebe711403cadd235ad2501a769-0-39e2b2c89b94d2fc09645d7a06b5b7fb" alt="Heat due to friction" class="w-full max-w-md h-auto rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Rumus Dasar -->
+            <div class="space-y-4 anim-up-d3">
+                <div class="math-block text-center" style="margin:0; font-size:1.4rem; border-left-color: var(--accent-th);">
+                    $$ W = F \cdot d $$                 </div>
+                <div class="math-block text-center" style="margin:0; font-size:1.4rem; border-left-color: var(--accent-th);">
+                    $$ E_{panas} = F_{friksi} \cdot d $$                 </div>
+                <div class="math-block text-center" style="margin:0; font-size:1.4rem; border-left-color: var(--accent-th);">
+                    $$ E_{panas} = \mu_k \cdot F_N \cdot d $$                 </div>
+
+                <!-- Gambar Konsep Penguin -->
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-3 flex justify-center bg-slate-50">
+                        <img src="https://z-cdn-media.chatglm.cn/files/cb4ec3d7-8533-41dd-af00-f1130aef9e13.png?auth_key=1879354198-53694211a6f44dc089958f0be3d7c10c-0-54fb45fd66a58c782d1b360b46be525c" alt="Penguin sliding concept" class="w-full max-w-sm h-auto rounded-lg">
+                    </div>
+                    <div class="p-3 text-xs" style="background: #f8fafc; color:var(--muted);">Secara umum, jika benda berhenti ($E_{K2} = 0$), maka seluruh energi awal dan usaha eksternal diubah menjadi panas.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contoh Soal Interaktif (Penguin di Bidang Miring - LAYOUT BARU) -->
+        <div class="card p-5 anim-up-d4" style="border-top: 4px solid var(--accent-mec);">
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-bolt" style="color:var(--accent-mec);"></i> Contoh Kasus: Penguin Meluncur 🐧</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-5">
+                <!-- Kiri: Teks Soal -->
+                <div>
+                    <p class="text-base" style="color:var(--muted);">Seekor penguin berseluncur dari ketinggian $h = 4 \text{ m}$ pada bidang miring licin, kemudian meluncur di bidang datar yang kasar dengan koefisien gesek kinetik $\mu_k = 0{,}2$. Seberapa jauh ($d$) penguin itu meluncur di bidang datar?</p>
+                </div>
+                <!-- Kanan: Gambar Soal (DIPERBESAR) -->
+                <div class="p-3 flex justify-center bg-slate-50 rounded-lg border" style="border-color: var(--border);">
+                    <img src="https://z-cdn-media.chatglm.cn/files/cee1f515-39af-4fad-baa4-4d2b16b8dabb.png?auth_key=1879354198-df7538597d734f84a0c4bec2b7f8871a-0-df0e71ac1c1cf071eb4e91468b198cd3" alt="Penguin ramp problem" class="w-full h-auto rounded-lg shadow-sm">
+                </div>
+            </div>
+
+            <!-- Pembahasan Interaktif (Full Width) -->
+            <div class="prompt-wrapper">
+                <div class="prompt-header">
+                    <div class="prompt-icon">?</div>
+                    <span class="font-semibold">Hitung jarak $d$ penguin di bidang datar!</span>
+                </div>
+                <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Pembahasan Langkah demi Langkah</button>
+                <div class="discussion-box text-base leading-loose" style="font-size: 1.05rem;">
+                    <p class="mb-3 font-bold" style="color:var(--accent-mec);">Gunakan persamaan: $E_1 + W_{ext} = E_2$</p>
+                    
+                    <p class="mb-2"><strong>Keadaan 1 (Puncak):</strong> $v_1 = 0$, $h_1 = h$, tidak ada pegas.</p>
+                    <div class="math-block text-left" style="margin:0.5rem 0; font-size:1.2rem;">
+                        $$ E_1 = E_{K1} + E_{Pg1} = 0 + mgh = mgh $$                     </div>
+
+                    <p class="mt-4 mb-2"><strong>Keadaan 2 (Berhenti di datar):</strong> $v_2 = 0$, $h_2 = 0$.</p>
+                    <div class="math-block text-left" style="margin:0.5rem 0; font-size:1.2rem;">
+                        $$ E_2 = E_{K2} + E_{Pg2} = 0 + 0 = 0 $$                     </div>
+
+                    <p class="mt-4 mb-2"><strong>Usaha oleh gaya eksternal (Gesekan di bidang datar):</strong></p>
+                    <div class="math-block text-left" style="margin:0.5rem 0; font-size:1.2rem;">
+                        $$ W_{ext} = -f_k \cdot d = -\mu_k \cdot F_N \cdot d $$                     </div>
+                    <p class="mb-2">Di bidang datar, gaya normal $F_N = mg$. Sehingga:</p>
+                    <div class="math-block text-left" style="margin:0.5rem 0; font-size:1.2rem;">
+                        $$ W_{ext} = -\mu_k \cdot mg \cdot d $$                     </div>
+
+                    <p class="mt-4 mb-2 font-bold" style="color:var(--accent-mec);">Substitusikan ke persamaan utama:</p>
+                    <div class="math-block text-center" style="margin:0.5rem 0; font-size:1.3rem; border-left-color: var(--accent-mec);">
+                        $$ mgh + (-\mu_k \cdot mg \cdot d) = 0 $$                     </div>
+
+                    <p class="mt-4 mb-2">Pindahkan variabel dan <strong>coret massa $m$ dan gravitasi $g$</strong>:</p>
+                    <div class="math-block text-center" style="margin:0.5rem 0; font-size:1.3rem; border-left-color: var(--accent-mec);">
+                        $$ mgh = \mu_k \cdot mg \cdot d \implies h = \mu_k \cdot d $$                     </div>
+
+                    <p class="mt-4 mb-2">Hitung jarak $d$:</p>
+                    <div class="math-block text-center" style="margin:0.5rem 0; font-size:1.4rem; border-left-color: var(--accent-pe);">
+                        $$ d = \frac{h}{\mu_k} = \frac{4 \text{ m}}{0{,}2} = 20 \text{ m} $$                     </div>
+                    <p class="mt-2 text-xs" style="color:var(--accent-mec);">Hasilnya sangat elegan: Jarak penguin hanya bergantung pada ketinggian awal dan tingkat kekasaran lantai!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 9: KE MANA PERGINYA ENERGI PANAS? ================= -->
+<section class="slide" id="slide10">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(79,70,229,0.1);color:var(--accent-mec);">Hukum Kekekalan Sejati</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Ke Mana Perginya Energi Panas?</h2>
+
+        <!-- Pertanyaan Konseptual -->
+        <div class="card p-5 mb-6 anim-up-d2" style="border: 2px dashed var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.04), #ffffff);">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent-mec);"><i class="fa-solid fa-circle-question mr-2"></i> Pertanyaan Konseptual</h3>
+            <p class="text-lg" style="color:var(--fg);">
+                Kita tahu gesekan mengubah energi mekanik menjadi panas. Namun, setelah benda tersebut mendingin kembali ke suhu ruang, kemana perginya energi panas tersebut? Apakah energi itu lenyap begitu saja dari alam semesta?
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- Kiri: Jawaban & Analogi -->
+            <div class="space-y-5 anim-up-d3">
+                <div class="card p-5" style="border-top: 4px solid var(--accent-pe);">
+                    <h3 class="text-xl font-bold mb-3" style="color:var(--accent-pe);">Jawabannya: Tidak Hilang, Menyebar!</h3>
+                    <p class="text-base mb-3" style="color:var(--muted);">Energi tidak pernah musnah. Energi panas tadi berpindah ke lingkungan melalui:</p>
+                    <ul class="space-y-2 text-base" style="color:var(--fg);">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-fire-flame-curved mt-1" style="color:var(--accent-th);"></i><span><strong>Konduksi:</strong> Sentuhan langsung (benda panas menyentuh tangan/meja).</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-wind mt-1" style="color:var(--accent-th);"></i><span><strong>Konveksi:</strong> Aliran udara panas naik.</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-bolt mt-1" style="color:var(--accent-th);"></i><span><strong>Radiasi:</strong> Pancaran gelombang inframerah.</span></li>
+                    </ul>
+                </div>
+
+                <div class="card p-5" style="border-left: 4px solid var(--accent-th);">
+                    <h3 class="text-lg font-bold mb-2">Analogi: Gosok Tangan 🤲</h3>
+                    <p class="text-base" style="color:var(--muted);">Anda menggosok tangan $\rightarrow$ tangan hangat (Energi kinetik berubah jadi panas). Setelah beberapa menit tangan dingin lagi. Apakah energinya hilang? <strong>Tidak!</strong> Ia sudah berpindah ke udara sekitar sebagai gerakan acak molekul udara dan radiasi panas.</p>
+                </div>
+            </div>
+
+            <!-- Kanan: Konsep Entropi & Hukum Kekekalan Mutlak -->
+            <div class="space-y-5 anim-up-d4">
+                <div class="card p-5" style="border-left: 4px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.05), #ffffff);">
+                    <h3 class="text-xl font-bold mb-3" style="color:var(--accent-mec);">Konsep Entropi (Termodinamika)</h3>
+                    <p class="text-base mb-3" style="color:var(--muted);">Secara mikroskopis, energi panas itu masih ada, tapi menjadi <strong>gerakan acak molekul</strong> di lingkungan (udara, lantai, meja, dinding).</p>
+                    <div class="p-4 rounded-lg text-center" style="background: rgba(79,70,229,0.05);">
+                        <p class="text-base font-bold" style="color:var(--accent-mec);">Energi cenderung menyebar dari keadaan teratur $\rightarrow$ lebih acak.</p>
+                        <p class="text-sm mt-1" style="color:var(--muted);">(Inilah dasar dari Hukum Ke-2 Termodinamika: Entropi selalu bertambah).</p>
+                    </div>
+                </div>
+
+                <div class="card p-5" style="border-top: 4px solid var(--accent-ke);">
+                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-ke);"></i> Makna "Energi Hilang"</h3>
+                    <p class="text-base" style="color:var(--muted);">Dalam fisika modern, ketika kita bilang "energi hilang", yang sebenarnya terjadi adalah:</p>
+                    <p class="text-base mt-2 font-bold text-center" style="color:var(--accent-ke);">Energi berubah menjadi bentuk yang tidak lagi berguna untuk melakukan kerja mekanik secara efektif.</p>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Bukan benar-benar lenyap dari alam semesta!</p>
+                </div>
+
+                <!-- Formula Akhir -->
+                <div class="formula-box text-center w-full" style="color: var(--accent-mec); font-size: 1.8rem; border-color: var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.08), #ffffff);">
+                    $$ E_{total\ alam\ semesta} = \text{Konstan} $$                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= SLIDE 10: WRAP-UP & LATIHAN ================= -->
+<section class="slide" id="slide11">
+    <div class="max-w-6xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(79,70,229,0.1);color:var(--accent-mec);">Rangkuman & Latihan</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Rangkuman & Latihan Soal</h2>
+
+        <!-- Rangkuman Visual 3 Kolom -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 anim-up-d2">
+            <!-- Kartu Ug -->
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--accent-pe);">
+                <div class="text-3xl font-black mb-2" style="color:var(--accent-pe);">$U_g$</div>
+                <div class="text-sm font-semibold mb-3" style="color:var(--muted);">Energi Potensial Gravitasi</div>
+                <div class="math-block text-center" style="margin:0; font-size:1.3rem; border-left-color: var(--accent-pe);">
+                    $$ U_g = mgh $$                 </div>
+                <p class="text-xs mt-3" style="color:var(--muted);">Tergantung ketinggian ($h$) dari titik referensi.</p>
+            </div>
+            <!-- Kartu Us -->
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--accent-th);">
+                <div class="text-3xl font-black mb-2" style="color:var(--accent-th);">$U_s$</div>
+                <div class="text-sm font-semibold mb-3" style="color:var(--muted);">Energi Potensial Elastis</div>
+                <div class="math-block text-center" style="margin:0; font-size:1.3rem; border-left-color: var(--accent-th);">
+                    $$ U_s = \frac{1}{2}kx^2 $$                 </div>
+                <p class="text-xs mt-3" style="color:var(--muted);">Tergantung regangan/tekanan pegas ($x$) dari posisi setimbang.</p>
+            </div>
+            <!-- Kartu Kekekalan -->
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--accent-mec);">
+                <div class="text-3xl font-black mb-2" style="color:var(--accent-mec);">$E_{mec}$</div>
+                <div class="text-sm font-semibold mb-3" style="color:var(--muted);">Kekekalan Energi Mekanik</div>
+                <div class="math-block text-center" style="margin:0; font-size:1.1rem; border-left-color: var(--accent-mec);">
+                    $$ K_1 + U_1 = K_2 + U_2 $$                 </div>
+                <p class="text-xs mt-3" style="color:var(--muted);">Berlaku jika hanya gaya konservatif yang bekerja (tanpa gesekan).</p>
+            </div>
+        </div>
+
+        <!-- Tabel Perbandingan -->
+        <div class="card p-0 overflow-hidden mb-6 anim-up-d3">
+            <div class="p-3 text-center font-bold text-base border-b" style="background:rgba(79,70,229,0.05); color:var(--accent-mec);">
+                <i class="fa-solid fa-table-columns mr-2"></i>Tabel Perbandingan Gaya Konservatif vs Non-Konservatif
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-base" style="border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f1f5f9;">
+                            <th class="p-3 text-left font-bold border-b" style="border-color:var(--border);">Aspek</th>
+                            <th class="p-3 text-center font-bold border-b" style="border-color:var(--border); color:var(--accent-pe);">Konservatif</th>
+                            <th class="p-3 text-center font-bold border-b" style="border-color:var(--border); color:var(--accent-th);">Non-Konservatif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3 font-semibold border-b" style="border-color:var(--border);">Usaha Pulang-Pergi</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border); color:var(--accent-pe); font-weight:700;">$W = 0$</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border); color:var(--accent-th); font-weight:700;">$W \neq 0$ (selalu negatif)</td>
+                        </tr>
+                        <tr style="background:#fafafa;">
+                            <td class="p-3 font-semibold border-b" style="border-color:var(--border);">Ketergantungan Jalur</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border);">Tidak bergantung jalur</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border);">Sangat bergantung jalur</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold border-b" style="border-color:var(--border);">Energi Potensial</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border); color:var(--accent-pe); font-weight:700;">Bisa didefinisikan ($U$)</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border); color:var(--accent-th); font-weight:700;">Tidak bisa didefinisikan</td>
+                        </tr>
+                        <tr style="background:#fafafa;">
+                            <td class="p-3 font-semibold border-b" style="border-color:var(--border);">Energi Mekanik</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border);">Kekekalan terjaga</td>
+                            <td class="p-3 text-center border-b" style="border-color:var(--border);">Berkurang $\rightarrow$ panas</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold" style="border-color:var(--border);">Contoh</td>
+                            <td class="p-3 text-center" style="color:var(--accent-pe);">Gravitasi, Gaya Pegas</td>
+                            <td class="p-3 text-center" style="color:var(--accent-th);">Gesekan, Hambatan Udara</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Latihan Soal -->
+        <div class="space-y-5 anim-up-d4">
+            <h3 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-pencil" style="color:var(--accent-mec);"></i> Latihan Soal</h3>
+
+            <!-- Soal 1 -->
+            <div class="card p-5" style="border-left: 4px solid var(--accent-pe);">
+                <div class="flex items-start gap-3 mb-3">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--accent-pe);">1</span>
+                    <div>
+                        <h4 class="font-bold text-lg">Energi Potensial Gravitasi</h4>
+                        <p class="text-base mt-1" style="color:var(--muted);">Sebuah batu bermassa $m = 5 \text{ kg}$ berada di tepi tebing setinggi $h = 12 \text{ m}$. Berapa energi potensial gravitasinya? Jika batu jatuh bebas, berapa kecepatannya saat menyentuh tanah?</p>
+                    </div>
+                </div>
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Lihat Pembahasan</span>
+                    </div>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Jawaban</button>
+                    <div class="discussion-box text-base leading-relaxed">
+                        <p class="mb-2"><strong>Energi Potensial:</strong></p>
+                        $$ U_g = mgh = (5)(9{,}8)(12) = 588 \text{ J} $$                         <p class="mt-3 mb-2"><strong>Kecepatan di dasar (Kekekalan Energi):</strong></p>
+                        $$ mgh = \frac{1}{2}mv^2 \implies v = \sqrt{2gh} $$                         $$ v = \sqrt{2(9{,}8)(12)} = \sqrt{235{,}2} \approx 15{,}3 \text{ m/s} $$                     </div>
+                </div>
+            </div>
+
+            <!-- Soal 2 -->
+            <div class="card p-5" style="border-left: 4px solid var(--accent-th);">
+                <div class="flex items-start gap-3 mb-3">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--accent-th);">2</span>
+                    <div>
+                        <h4 class="font-bold text-lg">Energi Potensial Elastis</h4>
+                        <p class="text-base mt-1" style="color:var(--muted);">Sebuah pegas memiliki konstanta $k = 400 \text{ N/m}$. Pegas ditekan sejauh $x = 8 \text{ cm}$. Berapa energi potensial yang tersimpan? Jika pegas dilepaskan dan mendorong bola bermassa $m = 0{,}2 \text{ kg}$, berapa kecepatan bola saat lepas dari pegas?</p>
+                    </div>
+                </div>
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Lihat Pembahasan</span>
+                    </div>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Jawaban</button>
+                    <div class="discussion-box text-base leading-relaxed">
+                        <p class="mb-2"><strong>Energi Potensial Pegas:</strong> Ingat konversi cm $\rightarrow$ m!</p>
+                        $$ x = 8 \text{ cm} = 0{,}08 \text{ m} $$                         $$ U_s = \frac{1}{2}kx^2 = \frac{1}{2}(400)(0{,}08)^2 = 200 \times 0{,}0064 = 1{,}28 \text{ J} $$                         <p class="mt-3 mb-2"><strong>Kecepatan Bola (Kekekalan Energi: $U_s \rightarrow K$):</strong></p>
+                        $$ \frac{1}{2}kx^2 = \frac{1}{2}mv^2 $$                         $$ 1{,}28 = \frac{1}{2}(0{,}2)v^2 $$                         $$ v^2 = \frac{2 \times 1{,}28}{0{,}2} = 12{,}8 $$                         $$ v = \sqrt{12{,}8} \approx 3{,}58 \text{ m/s} $$                     </div>
+                </div>
+            </div>
+
+            <!-- Soal 3 -->
+            <div class="card p-5" style="border-left: 4px solid var(--accent-ke);">
+                <div class="flex items-start gap-3 mb-3">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--accent-ke);">3</span>
+                    <div>
+                        <h4 class="font-bold text-lg">Energi Mekanik dengan Gesekan</h4>
+                        <p class="text-base mt-1" style="color:var(--muted);">Bola bowling bermassa $m = 7 \text{ kg}$ dilepaskan dari puncak bidang miring setinggi $h = 3 \text{ m}$. Bidang datar di bawahnya memiliki koefisien gesek kinetik $\mu_k = 0{,}15$. Berapa jarak tempuh bola di bidang datar sebelum berhenti?</p>
+                    </div>
+                </div>
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Lihat Pembahasan</span>
+                    </div>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Jawaban</button>
+                    <div class="discussion-box text-base leading-relaxed">
+                        <p class="mb-2"><strong>Keadaan 1 (Puncak):</strong> $v_1 = 0$, $h_1 = 3 \text{ m}$</p>
+                        $$ E_1 = mgh = 7 \times 9{,}8 \times 3 = 205{,}8 \text{ J} $$                         <p class="mt-3 mb-2"><strong>Keadaan 2 (Berhenti di datar):</strong> $v_2 = 0$, $h_2 = 0$</p>
+                        $$ E_2 = 0 $$                         <p class="mt-3 mb-2"><strong>Usaha gesekan di bidang datar:</strong> $F_N = mg$</p>
+                        $$ W_{gesek} = -\mu_k \cdot mg \cdot d $$                         <p class="mt-3 mb-2"><strong>Terapkan $E_1 + W = E_2$:</strong></p>
+                        $$ mgh - \mu_k \cdot mg \cdot d = 0 $$                         $$ mgh = \mu_k \cdot mg \cdot d $$                         <p class="mt-2">Coret $m$ dan $g$:</p>
+                        $$ d = \frac{h}{\mu_k} = \frac{3}{0{,}15} = 20 \text{ m} $$                     </div>
+                </div>
+            </div>
+
+            <!-- Soal 4 -->
+            <div class="card p-5" style="border-left: 4px solid var(--accent-mec);">
+                <div class="flex items-start gap-3 mb-3">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--accent-mec);">4</span>
+                    <div>
+                        <h4 class="font-bold text-lg">Kombinasi Gravitasi & Pegas</h4>
+                        <p class="text-base mt-1" style="color:var(--muted);">Balok bermassa $m = 2 \text{ kg}$ dilepaskan dari keadaan diam di ketinggian $h = 0{,}5 \text{ m}$ di atas pegas vertikal dengan konstanta $k = 500 \text{ N/m}$. Berapa penekanan maksimum pegas saat balok mendarat? (Asumsi tidak ada gesekan).</p>
+                    </div>
+                </div>
+                <div class="prompt-wrapper">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">?</div>
+                        <span class="font-semibold">Lihat Pembahasan</span>
+                    </div>
+                    <button class="reveal-btn"><i class="fa-solid fa-eye"></i> Lihat Jawaban</button>
+                    <div class="discussion-box text-base leading-relaxed">
+                        <p class="mb-2"><strong>Keadaan 1 (Dilepaskan):</strong> $v_1 = 0$, pegas belum tertekan ($x_1 = 0$), ketinggian dari ujung pegas = $h$.</p>
+                        $$ E_1 = mgh $$                         <p class="mt-3 mb-2"><strong>Keadaan 2 (Pegas tertekan maksimum):</strong> $v_2 = 0$, pegas tertekan sejauh $x$, ketinggian balok sudah turun sejauh $h + x$ dari posisi awal.</p>
+                        $$ E_2 = \frac{1}{2}kx^2 - mg(h + x) $$                         <p class="mt-1 text-xs" style="color:var(--accent-ke);"><em>Catatan: Titik referensi $h=0$ di posisi awal, sehingga saat tertekan $h_2 = -(h+x)$ dan $U_{g2} = -mg(h+x)$.</em></p>
+                        <p class="mt-3 mb-2"><strong>Kekekalan Energi $E_1 = E_2$:</strong></p>
+                        $$ mgh = \frac{1}{2}kx^2 - mg(h + x) $$                         <p class="mt-2">Lebih mudah: Posisi terendah sebagai referensi $U_g = 0$. Maka dari posisi awal, total penurunan = $h + x$:</p>
+                        $$ mg(h + x) = \frac{1}{2}kx^2 $$                         $$ 2(9{,}8)(0{,}5 + x) = \frac{1}{2}(500)x^2 $$                         $$ 9{,}8 + 19{,}6x = 250x^2 $$                         $$ 250x^2 - 19{,}6x - 9{,}8 = 0 $$                         <p class="mt-2">Gunakan rumus kuadrat $x = \frac{-b + \sqrt{b^2 - 4ac}}{2a}$ (ambil akar positif):</p>
+                        $$ x = \frac{19{,}6 + \sqrt{(19{,}6)^2 + 4(250)(9{,}8)}}{2(250)} $$                         $$ x = \frac{19{,}6 + \sqrt{384{,}16 + 9800}}{500} $$                         $$ x = \frac{19{,}6 + \sqrt{10184{,}16}}{500} = \frac{19{,}6 + 100{,}92}{500} $$                         $$ x = \frac{120{,}52}{500} \approx 0{,}241 \text{ m} \approx 24{,}1 \text{ cm} $$                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Penutup -->
+        <div class="card p-8 mt-8 text-center anim-up-d5" style="border: 2px solid var(--accent-mec); background: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(5,150,105,0.04), rgba(220,38,38,0.04));">
+            <h2 class="text-3xl md:text-4xl font-black mb-3" style="color:var(--accent-mec);">Selamat Belajar!</h2>
+            <p class="text-lg mb-5" style="color:var(--muted);">Ingat: Energi tidak pernah hilang dari alam semesta. Ia hanya berpindah bentuk &mdash; dari Kinetik ke Potensial, dari Mekanik ke Panas. Pahami prinsip ini, dan Anda memegang kunci memahami seluruh fisika.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <div class="card px-5 py-3 float-anim" style="animation-delay:0s; border-bottom: 3px solid var(--accent-pe);">
+                    <div class="text-2xl font-black" style="color:var(--accent-pe);">$U_g = mgh$</div>
+                </div>
+                <div class="card px-5 py-3 float-anim" style="animation-delay:0.3s; border-bottom: 3px solid var(--accent-th);">
+                    <div class="text-2xl font-black" style="color:var(--accent-th);">$U_s = \frac{1}{2}kx^2$</div>
+                </div>
+                <div class="card px-5 py-3 float-anim" style="animation-delay:0.6s; border-bottom: 3px solid var(--accent-mec);">
+                    <div class="text-2xl font-black" style="color:var(--accent-mec);">$E_{M1} = E_{M2}$</div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-5 text-sm" style="color:var(--muted);">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-book" style="color:var(--accent-mec);"></i>Fisika Dasar</div>
+                <span>|</span>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-user" style="color:var(--accent-mec);"></i> Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div>
+                <span>|</span>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-school" style="color:var(--accent-mec);"></i> Politeknik ATMI Surakarta</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div> <!-- Penutup slide-area -->
+
+<script>
+    // ==========================================
+    // SCRIPT NAVIGASI PRESENTASI (ANTI-HANG)
+    // ==========================================
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const navDotsContainer = document.getElementById('navDots');
+    const slideCounter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+
+    function initNavDots() {
+        navDotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dot.setAttribute('aria-label', `Slide ${i+1}`);
+            navDotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateUI() {
+        slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+        const dots = document.querySelectorAll('.nav-dot');
+        dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= totalSlides || index === currentSlide) return;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = index;
+        slides[currentSlide].classList.add('active');
+        updateUI();
+        handleSimState();
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+    });
+
+    document.querySelectorAll('.reveal-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const wrapper = btn.closest('.prompt-wrapper');
+            wrapper.classList.toggle('active');
+            const box = wrapper.querySelector('.discussion-box');
+            box.classList.toggle('show');
+            btn.innerHTML = box.classList.contains('show') ? '<i class="fa-solid fa-eye-slash"></i> Sembunyikan' : '<i class="fa-solid fa-eye"></i> Lihat Konsep';
+        });
+    });
+
+    initNavDots();
+
+    // ==========================================
+    // SCRIPT SIMULASI INTERAKTIF VERTIKAL (SLIDE 2)
+    // ==========================================
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    let simAnimFrame = null;
+    let simRunning = false;
+    
+    const phys = { m: 2, g: 9.8, maxY: 5.0 };
+    let block = { y: 4.0, v: 0, dragging: false, maxE: phys.m * phys.g * phys.maxY };
+    
+    const barUg = document.getElementById('barUg');
+    const barK = document.getElementById('barK');
+    const barEmec = document.getElementById('barEmec');
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const barsHeight = 110; 
+        canvas.width = rect.width;
+        canvas.height = rect.height - barsHeight;
+    }
+
+    function drawSim() {
+        if(canvas.width === 0 || canvas.height === 0) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const pad = 30;
+        const groundY = canvas.height - pad;
+        const topY = pad;
+        const trackX = canvas.width / 2;
+        const trackH = groundY - topY;
+        const scale = trackH / phys.maxY; 
+
+        const Ug = phys.m * phys.g * block.y;
+        const K = 0.5 * phys.m * block.v * block.v;
+        const Emec = Ug + K;
+        if (Emec > block.maxE) block.maxE = Emec;
+
+        const scaleE = 85 / block.maxE; 
+        barUg.style.height = Math.min(100, Ug * scaleE) + '%'; document.getElementById('valUg').innerText = Ug.toFixed(0) + 'J';
+        barK.style.height = Math.min(100, K * scaleE) + '%'; document.getElementById('valK').innerText = K.toFixed(0) + 'J';
+        barEmec.style.height = Math.min(100, Emec * scaleE) + '%'; document.getElementById('valEmec').innerText = Emec.toFixed(0) + 'J';
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(trackX - 25, topY, 50, trackH); 
+        ctx.fillStyle = '#cbd5e1';
+        for(let i=0; i<=5; i++) {
+            const yLine = groundY - (i * scale);
+            ctx.fillRect(trackX + 25, yLine, 10, 2);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px "Space Grotesk"';
+            ctx.textAlign = 'left';
+            ctx.fillText(i + 'm', trackX + 38, yLine + 4);
+            ctx.fillStyle = '#cbd5e1';
+        }
+        
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(0, groundY, canvas.width, 3); 
+
+        const blockCanvasY = groundY - (block.y * scale);
+        const bW = 50, bH = 40;
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(trackX - bW/2, blockCanvasY - bH, bW, bH);
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '16px "Space Grotesk"';
+        ctx.textAlign = 'center';
+        ctx.fillText('m', trackX, blockCanvasY - bH/2 + 6);
+
+        ctx.fillStyle = '#1e293b';
+        ctx.font = '13px "Space Grotesk"';
+        ctx.textAlign = 'left';
+        ctx.fillText('h = ' + block.y.toFixed(1) + ' m', trackX + bW/2 + 10, blockCanvasY - bH/2);
+
+        if(!block.dragging && Math.abs(block.v) < 0.2 && block.y < 0.2) {
+            ctx.fillStyle = 'var(--muted)';
+            ctx.font = '14px "Space Grotesk"';
+            ctx.textAlign = 'center';
+            ctx.fillText("⬆ Tarik balok ke atas, lalu lepaskan!", canvas.width/2, 20);
+        }
+    }
+
+    let lastTime = 0;
+    function updateSim(time) {
+        if(!lastTime) lastTime = time;
+        const dt = Math.min((time - lastTime) / 1000, 0.05); 
+        lastTime = time;
+
+        if (!block.dragging) {
+            block.v -= phys.g * dt;
+            block.y += block.v * dt;
+
+            if (block.y < 0) { 
+                block.y = 0; 
+                block.v = Math.abs(block.v) * 0.6; 
+            }
+        }
+
+        drawSim();
+        if (simRunning) simAnimFrame = requestAnimationFrame(updateSim);
+    }
+
+    function startSim() { 
+        if(!simRunning) { 
+            simRunning = true; 
+            resizeCanvas(); 
+            lastTime = 0; 
+            simAnimFrame = requestAnimationFrame(updateSim); 
+        } 
+    }
+    function stopSim() { 
+        simRunning = false; 
+        if(simAnimFrame) { cancelAnimationFrame(simAnimFrame); simAnimFrame = null; } 
+    }
+
+    function handleSimState() {
+        if (currentSlide === 2) startSim();
+        else stopSim();
+    }
+
+    function getEventPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function handleStart(e) {
+        e.preventDefault();
+        const pos = getEventPos(e);
+        const pad = 30;
+        const groundY = canvas.height - pad;
+        const topY = pad;
+        const trackH = groundY - topY;
+        const scale = trackH / phys.maxY;
+        
+        const blockCanvasY = groundY - (block.y * scale);
+        
+        if (Math.abs(pos.x - canvas.width/2) < 30 && Math.abs(pos.y - (blockCanvasY - 20)) < 30) {
+            block.dragging = true;
+            block.v = 0;
+            canvas.addEventListener('mousemove', handleMove);
+            canvas.addEventListener('mouseup', handleEnd);
+            canvas.addEventListener('touchmove', handleMove, {passive: false});
+            canvas.addEventListener('touchend', handleEnd);
+        }
+    }
+
+    function handleMove(e) {
+        e.preventDefault();
+        const pos = getEventPos(e);
+        const pad = 30;
+        const groundY = canvas.height - pad;
+        const topY = pad;
+        const trackH = groundY - topY;
+        const scale = trackH / phys.maxY;
+        
+        let newY = (groundY - pos.y) / scale;
+        block.y = Math.max(0.1, Math.min(phys.maxY, newY));
+        block.maxE = phys.m * phys.g * block.y;
+    }
+
+    function handleEnd() {
+        block.dragging = false;
+        canvas.removeEventListener('mousemove', handleMove);
+        canvas.removeEventListener('mouseup', handleEnd);
+        canvas.removeEventListener('touchmove', handleMove);
+        canvas.removeEventListener('touchend', handleEnd);
+    }
+
+    canvas.addEventListener('mousedown', handleStart);
+    canvas.addEventListener('touchstart', handleStart, {passive: false});
+
+// ==========================================
+// SCRIPT SIMULASI INTERAKTIF SLIDE 5 (Layout Rapikan)
+// ==========================================
+(function() {
+    const canvas = document.getElementById("simCanvasSlide5");
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+
+    const g = 9.8;
+    const mass = 60; 
+    let h = 20;      
+    let t = 0;
+    let running = false;
+    let simAnimFrame = null;
+
+    const peMaxText = document.getElementById("peMaxText");
+    const keMaxText = document.getElementById("keMaxText");
+    const velocityText = document.getElementById("velocityText");
+    const heightInput = document.getElementById("heightInput");
+
+    function updateCalculations() {
+        h = parseFloat(heightInput.value) || 1;
+        const totalE = mass * g * h;
+        const finalV = Math.sqrt(2 * g * h);
+        
+        peMaxText.innerText = totalE.toFixed(0) + " J";
+        keMaxText.innerText = totalE.toFixed(0) + " J";
+        velocityText.innerText = finalV.toFixed(2) + " m/s";
+    }
+
+    heightInput.addEventListener('input', () => {
+        updateCalculations();
+        drawSim(); 
+    });
+
+    // Persamaan Lintasan Disesuaikan agar TITIK AKHIR SAMA di Y=380
+    function paulPath(s){
+        let x = 80 + 420*s;
+        let y = 80 + 20*Math.sin(2*Math.PI*s) + 300*Math.pow(s,2);
+        return {x,y};
+    }
+
+    function corinnePath(s){
+        let x = 80 + 420*s;
+        let y = 80 + 230*Math.pow(s,0.6) + 70*Math.pow(s,3);
+        return {x,y};
+    }
+
+    function drawTrack(pathFunction, color){
+        ctx.beginPath();
+        for(let i=0;i<=1;i+=0.01){
+            let p = pathFunction(i);
+            if(i===0) ctx.moveTo(p.x,p.y);
+            else ctx.lineTo(p.x,p.y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+    }
+
+    function drawPerson(pos, color, label){
+        ctx.beginPath();
+        ctx.arc(pos.x,pos.y,10,0,Math.PI*2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "bold 14px 'Space Grotesk'";
+        ctx.fillText(label,pos.x-15,pos.y-18);
+    }
+
+    function drawEnergyBars(baseX, baseY, pe, ke, totalE){
+        if(totalE === 0) return;
+        let maxBarH = 280; // Maks tinggi visual bar
+        let scale = maxBarH / totalE;
+        let barW = 25;
+
+        // PE Bar (Hijau)
+        ctx.fillStyle = "#059669"; 
+        ctx.fillRect(baseX, baseY - pe*scale, barW, pe*scale);
+        
+        // KE Bar (Merah)
+        ctx.fillStyle = "#dc2626"; 
+        ctx.fillRect(baseX + barW + 8, baseY - ke*scale, barW, ke*scale);
+
+        // Total E Bar (Indigo)
+        ctx.fillStyle = "#4f46e5"; 
+        let totalH = (pe+ke)*scale;
+        ctx.fillRect(baseX + 2*(barW + 8), baseY - totalH, barW, totalH);
+
+        // Garis dasar
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(baseX - 5, baseY);
+        ctx.lineTo(baseX + 3*barW + 16, baseY);
+        ctx.stroke();
+
+        // Labels Bawah
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "bold 11px 'Space Grotesk'";
+        ctx.textAlign = "center";
+        ctx.fillText("PE", baseX + barW/2, baseY + 15);
+        ctx.fillText("KE", baseX + barW + 8 + barW/2, baseY + 15);
+        ctx.fillText("Total", baseX + 2*(barW + 8) + barW/2, baseY + 15);
+        ctx.textAlign = "left"; // reset
+    }
+
+    function drawSim(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        // 1. Background Area Air & Tanah
+        ctx.fillStyle = "#f1f5f9";
+        ctx.fillRect(0,0,canvas.width,380);
+        
+        ctx.fillStyle = "rgba(186, 230, 253, 0.6)"; // Air biru muda
+        ctx.fillRect(0,380,canvas.width,70);
+        
+        ctx.fillStyle = "#0284c7";
+        ctx.font = "14px 'Space Grotesk'";
+        ctx.fillText("Permukaan Air", 20, 420);
+
+        // 2. Garis Ketinggian Awal
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.beginPath();
+        ctx.moveTo(40, 80);
+        ctx.lineTo(500, 80);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 16px 'Space Grotesk'";
+        ctx.fillText("h = " + h + " m", 40, 70);
+
+        // 3. Tracks
+        drawTrack(paulPath, "#059669"); 
+        drawTrack(corinnePath, "#4f46e5"); 
+
+        // 4. Posisi & Orang
+        let paulPos = paulPath(Math.min(t*0.6,1));
+        let corinnePos = corinnePath(Math.min(t*0.9,1));
+
+        drawPerson(paulPos, "#059669", "Paul");
+        drawPerson(corinnePos, "#4f46e5", "Corinne");
+
+        // 5. Kalkulasi Energi Dinamis
+        let totalE = mass * g * h;
+        let maxVisualDrop = 300; // 380 - 80
+        let paulHeight = Math.max(0, 380 - paulPos.y);
+        let corinneHeight = Math.max(0, 380 - corinnePos.y);
+        
+        let paulPE = (paulHeight / maxVisualDrop) * totalE;
+        let corinnePE = (corinneHeight / maxVisualDrop) * totalE;
+        
+        if(paulPE > totalE) paulPE = totalE;
+        if(corinnePE > totalE) corinnePE = totalE;
+
+        let paulKE = totalE - paulPE;
+        let corinneKE = totalE - corinnePE;
+
+        // 6. Gambar Energy Bars (Berdiri di atas air, Y=380)
+        drawEnergyBars(580, 380, paulPE, paulKE, totalE);      // Paul
+        drawEnergyBars(720, 380, corinnePE, corinneKE, totalE); // Corinne
+        
+        // Label Nama di atas bars
+        ctx.font = "bold 14px 'Space Grotesk'";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#059669";
+        ctx.fillText("Paul", 620, 380 + 35);
+        ctx.fillStyle = "#4f46e5";
+        ctx.fillText("Corinne", 760, 380 + 35);
+        ctx.textAlign = "left"; // reset
+
+        // 7. Teks Finishing
+        if(t >= 1.7){
+            ctx.fillStyle = "#dc2626";
+            ctx.font = "bold 22px 'Space Grotesk'";
+            ctx.textAlign = "center";
+            ctx.fillText("v akhir Paul = v akhir Corinne!", canvas.width/2, 35);
+            ctx.textAlign = "left"; // reset
+        }
+    }
+
+    function animateSim(){
+        if(!running) return;
+        t += 0.005;
+        drawSim();
+        if(t < 1.8){
+            simAnimFrame = requestAnimationFrame(animateSim);
+        } else {
+            running = false;
+        }
+    }
+
+    window.startSimulationSlide5 = function(){
+        if(running) return;
+        t = 0;
+        running = true;
+        updateCalculations();
+        animateSim();
+    }
+
+    updateCalculations();
+    drawSim();
+
+})();
+
+</script>
+
+</body>
+</html>
