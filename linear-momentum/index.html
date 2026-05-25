@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum Linear & Tumbukan - Fisika Dasar</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '$', right: '$', display: false}]});"></script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --fg: #1e293b;
+            --muted: #64748b;
+            --accent: #1e293b;
+            --accent2: #dc2626;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --nav-h: 80px;
+            --glass: rgba(255,255,255,0.85);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(--fg); overflow:hidden; height:100vh; width:100vw; font-size: 17px; }
+        h1,h2,h3 { font-family:'Playfair Display',serif; }
+
+        .top-nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); background:var(--glass); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); z-index:200; display:flex; align-items:center; padding:0 1.5rem; gap:1rem; }
+        .top-nav .logo-area { display:flex; align-items:center; gap:1rem; flex-shrink:0; }
+        .top-nav .logo-area img { height:55px; width:auto; object-fit:contain; border-radius:4px; }
+        .top-nav .logo-area span { font-weight:800; font-size:1.1rem; color:var(--accent); white-space:nowrap; }
+        .nav-center { flex:1; display:flex; justify-content:center; align-items:center; gap:0.35rem; overflow-x:auto; }
+        .nav-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; border:none; cursor:pointer; transition:all 0.3s; flex-shrink:0; }
+        .nav-dot.active { background:var(--accent2); width:24px; border-radius:4px; box-shadow:0 0 8px rgba(220,38,38,0.4); }
+        .nav-dot:hover { background:var(--accent2); }
+        .nav-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:0.75rem; flex-shrink:0; }
+        .nav-btn:hover { background:var(--accent2); color:#fff; border-color:var(--accent2); }
+        .slide-counter { font-size:0.75rem; color:var(--muted); font-weight:600; white-space:nowrap; flex-shrink:0; }
+
+        .progress-bar { position:fixed; top:var(--nav-h); left:0; height:3px; z-index:201; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+        .slide-area { position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; overflow:hidden; }
+        .slide { position:absolute; top:0; left:0; width:100%; height:100%; overflow-y:auto; overflow-x:hidden; opacity:0; transform:translateX(60px); transition:opacity 0.5s ease,transform 0.5s ease; pointer-events:none; padding:2rem 2.5rem 3rem; }
+        .slide.active { opacity:1; transform:translateX(0); pointer-events:auto; }
+        .slide.exit-left { opacity:0; transform:translateX(-60px); }
+
+        .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); transition:all 0.3s; }
+        .card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); transform:translateY(-2px); }
+
+        .math-block { background:#f1f5f9; border-left:4px solid var(--accent2); padding:1rem 1.5rem; border-radius:0 0.5rem 0.5rem 0; margin:0.75rem 0; overflow-x:auto; font-size:1.2rem; }
+        .math-block-slate { border-left-color: var(--accent); }
+
+        .badge { display:inline-block; padding:0.35rem 0.9rem; border-radius:9999px; font-size:0.8rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; }
+
+        .profile-img { width:220px; height:220px; border-radius:1rem; object-fit:cover; object-position: top center; border:3px solid var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-anim { animation:float 4s ease-in-out infinite; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .slide.active .anim-up { animation:fadeUp 0.6s ease forwards; }
+        .slide.active .anim-up-d1 { animation:fadeUp 0.6s 0.1s ease forwards; opacity:0; }
+        .slide.active .anim-up-d2 { animation:fadeUp 0.6s 0.2s ease forwards; opacity:0; }
+        .slide.active .anim-up-d3 { animation:fadeUp 0.6s 0.3s ease forwards; opacity:0; }
+        .slide.active .anim-up-d4 { animation:fadeUp 0.6s 0.4s ease forwards; opacity:0; }
+
+        .slide::-webkit-scrollbar { width:4px; }
+        .slide::-webkit-scrollbar-track { background:transparent; }
+        .slide::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:2px; }
+
+        /* --- CSS untuk Slide Interaktif --- */
+        .prompt-wrapper { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1rem; background: #fff; transition: all 0.3s; }
+        .prompt-wrapper.active { border-color: var(--accent2); background: linear-gradient(135deg, rgba(30,41,59,0.02), rgba(220,38,38,0.02)); }
+        
+        .prompt-header { display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+        .prompt-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9rem; }
+        .prompt-wrapper.active .prompt-icon { background: var(--accent2); }
+
+        .reveal-btn { background: transparent; border: 1px dashed var(--muted); color: var(--muted); padding: 0.3rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-top: 0.75rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .reveal-btn:hover { border-style: solid; border-color: var(--accent2); color: var(--accent2); }
+        .prompt-wrapper.active .reveal-btn { border-color: var(--accent2); color: var(--accent2); background: rgba(220,38,38,0.05); }
+
+        .discussion-box { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.3s ease, margin 0.3s ease; margin-top: 0; background: #f8fafc; border-left: 3px solid var(--accent2); border-radius: 0 0.5rem 0.5rem 0; padding: 0 1rem; font-size: 0.95rem; line-height: 1.6; }
+        .discussion-box.show { max-height: 6000px; opacity: 1; margin-top: 1rem; padding: 1rem; }
+
+        /* --- CSS Khusus Simulasi --- */
+        .sim-control { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .sim-control label { font-weight: 600; min-width: 140px; text-align: right; font-size: 0.95rem; }
+        .sim-control input[type=range] { flex: 1; }
+        .sim-control .val-display { font-weight: 700; min-width: 70px; color: var(--accent2); font-family: 'Courier New', monospace; }
+        .direction-btn { padding: 0.4rem 1rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--card); cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .direction-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .direction-btn:hover { border-color: var(--accent2); }
+
+        /* --- CSS untuk Zoom Gambar --- */
+        .zoom-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 9999; cursor: zoom-out; justify-content: center; align-items: center; padding: 2rem; }
+        .zoom-modal.active { display: flex; }
+        .zoom-modal img { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+
+        @media(max-width:768px) { .slide{padding:1.25rem 1rem 2rem} .formula-box{font-size:1.5rem;padding:0.75rem 1.25rem} .profile-img{width:140px;height:140px} .top-nav .logo-area span{display:none} }
+        @media(prefers-reduced-motion:reduce) { .slide{transition:opacity 0.2s;transform:none!important} .slide.active{transform:none!important} .float-anim{animation:none} }
+          
+        @media print {
+            .top-nav, .progress-bar, .zoom-modal { display: none !important; }
+            body { overflow: visible !important; height: auto !important; width: 100% !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
+            .slide-area { position: static !important; overflow: visible !important; height: auto !important; width: 100% !important; }
+            .slide { position: relative !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; width: 100% !important; height: auto !important; min-height: 90vh !important; page-break-after: always; page-break-inside: avoid; margin: 0 auto !important; padding: 2rem 3rem !important; box-sizing: border-box !important; box-shadow: none !important; border: none !important; overflow: visible !important; background-color: white !important; }
+            .slide.exit-left { opacity: 1 !important; transform: none !important; }
+            .anim-up, .anim-up-d1, .anim-up-d2, .anim-up-d3, .anim-up-d4 { opacity: 1 !important; animation: none !important; transform: none !important; }
+            .float-anim { animation: none !important; }
+            .card { box-shadow: none !important; break-inside: avoid; }
+            canvas, img { max-width: 100% !important; height: auto !important; }
+            .discussion-box { max-height: none !important; opacity: 1 !important; margin-top: 1rem !important; padding: 1rem !important; }
+            .reveal-btn { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Navigasi slide">
+    <div class="logo-area">
+        <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI">
+        <span>Politeknik ATMI Surakarta</span>
+    </div>
+    <div class="nav-center" id="navDots"></div>
+    <button class="nav-btn" onclick="prevSlide()" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="slide-counter" id="slideCounter">1 / 14</span>
+    <button class="nav-btn" onclick="nextSlide()" aria-label="Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
+</nav>
+<div class="progress-bar" id="progressBar" style="width:14.28%"></div>
+
+<!-- Zoom Modal Container -->
+<div id="zoomModal" class="zoom-modal" onclick="this.classList.remove('active')"></div>
+
+<div class="slide-area">
+
+<!-- SLIDE 0: COVER -->
+<section class="slide active" id="slide0">
+    <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
+        <div class="flex items-center gap-6 mb-6 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:320px;width:320px;object-fit:contain;border-radius:8px;">
+            <div>
+                <div class="text-xl font-bold" style="color:var(--accent);">Politeknik ATMI Surakarta</div>
+                <div class="text-base" style="color:var(--muted);">Teknik Mesin Industri</div>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-center mb-4 anim-up-d1" style="color:var(--accent);">Momentum Linear & Tumbukan</h1>
+        <p class="text-xl md:text-2xl text-center max-w-2xl mb-6 anim-up-d2" style="color:var(--muted);line-height:1.7;">Memahami kekekalan momentum dan bagaimana benda-benda saling bertukar gaya dan gerak saat bertumbukan.</p>
+        
+        <div class="card p-6 mb-8 max-w-3xl w-full anim-up-d3" style="border-left:4px solid var(--accent2); background:linear-gradient(135deg,rgba(220,38,38,0.04),rgba(30,41,59,0.04));">
+            <div class="text-left">
+                <h3 class="text-xl font-bold mb-4" style="color:var(--accent);">Learning Outcomes</h3>
+                <p class="text-base mb-4 font-medium" style="color:var(--fg);">Setelah mempelajari bab ini, mahasiswa diharapkan mampu:</p>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Mendefinisikan momentum linear dan hubungannya dengan gaya</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menjelaskan dan menerapkan Teorema Impuls-Momentum</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menerapkan Hukum Kekekalan Momentum pada sistem terisolasi</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Membedakan tumbukan lenting sempurna dan tidak lenting sama sekali</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menganalisis tumbukan dalam satu dimensi (1D) dan dua dimensi (2D)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6 mb-8 anim-up-d4">
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0s;"><div class="text-3xl font-black" style="color:var(--accent);">$\vec{p}$</div><div class="text-sm mt-1" style="color:var(--muted);">Momentum</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.4s;"><div class="text-3xl font-black" style="color:var(--accent2);">$\vec{J}$</div><div class="text-sm mt-1" style="color:var(--muted);">Impuls</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.8s;"><div class="text-3xl font-black" style="color:var(--accent);">$\Sigma \vec{p}$</div><div class="text-sm mt-1" style="color:var(--muted);">Kekekalan</div></div>
+        </div>
+        
+        <div class="card p-5 flex items-center gap-5 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Foto Dosen" class="w-36 h-36 rounded-lg object-cover" style="border:2px solid var(--border); object-position: top center;">
+            <div><div class="font-bold text-lg">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div><div class="text-base" style="color:var(--muted);">Fisika Dasar &mdash; Semester 2, 2 SKS</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 1: PROFIL DOSEN -->
+<section class="slide" id="slide1">
+    <div class="max-w-4xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Profil Dosen</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Dosen Pengampu</h2>
+        <div class="card p-6 md:p-8 anim-up-d2">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Ir. Fidelis Gigih Triatmaja" class="profile-img">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold mb-2">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</h3>
+                    <p class="text-base mb-5" style="color:var(--muted);">Dosen Fisika Dasar &mdash; Politeknik ATMI Surakarta</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-envelope w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>fidelis.gigih@atmi.ac.id</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-phone w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>0812 7161 2910</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-building w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>Kantor: Lab WAP &ndash; TMI</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-clock w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>08.00 &ndash; 17.00 WIB</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card p-6 mt-4 anim-up-d3">
+            <div class="flex items-center gap-3 mb-4"><i class="fa-solid fa-calendar-days text-xl" style="color:var(--accent2);"></i><span class="font-semibold text-lg">Jadwal Kuliah</span></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Hari</div><div style="color:var(--muted);">Kamis &amp; Jumat</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Waktu</div><div style="color:var(--muted);">08.30 &ndash; 11.20 WIB</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Kode MK</div><div style="color:var(--muted);">FISIKA DASAR-IPPD 1.1.5</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">SKS</div><div style="color:var(--muted);">Semester 2 &ndash; 2 SKS</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 2: KONSEP AWAL (HOOK) -->
+<section class="slide" id="slide2">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Pertanyaan Pemantik</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Gaya, Massa, dan Kecepatan</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6 anim-up-d2">
+            <div class="md:col-span-3 flex flex-col justify-center">
+                <p class="text-lg mb-4" style="color:var(--muted);">Perhatikan situasi berikut:</p>
+                <div class="card p-5" style="background: linear-gradient(135deg, rgba(30,41,59,0.03), rgba(220,38,38,0.03));">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fa-solid fa-train-tram text-2xl" style="color:var(--accent);"></i>
+                        <h3 class="text-xl font-bold" style="color:var(--accent);">Gerbong Kereta Batu Bara</h3>
+                    </div>
+                    <p class="text-base" style="color:var(--fg); line-height: 1.7;">Sebuah gerbong kereta yang penuh batu bara meluncur di rel datar tanpa gesekan. Seorang pekerja di bagian belakang mulai melempar batu bara secara horizontal ke <strong>belakang</strong> dari kereta yang bergerak itu.</p>
+                </div>
+                <p class="text-base mt-4 font-semibold" style="color:var(--accent);"><i class="fa-solid fa-circle-question mr-2" style="color:var(--accent2);"></i>Apa yang terjadi pada kecepatan kereta?</p>
+            </div>
+            <div class="md:col-span-2 flex items-center justify-center">
+                <img src="gambar/gambar-1.png" alt="Pekerja melempar batu bara dari kereta" class="w-full h-auto object-contain rounded-lg" style="max-height: 280px; border: 1px solid var(--border); background: white;">
+            </div>
+        </div>
+
+        <div class="anim-up-d3 space-y-4">
+            <div class="prompt-wrapper">
+                <div class="prompt-header">
+                    <div class="prompt-icon">1</div>
+                    <div class="text-lg font-medium">Saat batu dilempar ke belakang, apa yang terjadi pada <span style="color:var(--accent2); font-weight:700;">kecepatan kereta</span>?</div>
+                </div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <div class="flex justify-center mb-4">
+                        <img src="gambar/gambar-2.png" alt="Diagram melempar batu ke belakang" class="w-full h-auto object-contain rounded-lg" style="background: white; padding: 8px; border: 1px solid var(--border); cursor: zoom-in;" onclick="openZoom(this)">
+                    </div>
+                    <strong style="color:var(--accent2)">Jawab: Kereta menjadi lebih cepat (melaju).</strong><br> 
+                    Ketika batu dilempar ke belakang, batu tersebut membawa momentum ke belakang. Agar total momentum sistem tetap kekal (tidak ada gaya luar horizontal), kereta harus meningkatkan momentumnya ke depan. Massa kereta berkurang, tapi laju (kecepatan)nya meningkat untuk mengkompensasi.
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header">
+                    <div class="prompt-icon">2</div>
+                    <div class="text-lg font-medium">Bagaimana jika batu bara jatuh keluar <span style="color:var(--accent2); font-weight:700;">melalui lubang di lantai</span> kereta (hanya jatuh vertikal ke bawah)?</div>
+                </div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <div class="flex justify-center mb-4">
+                        <img src="gambar/gambar-3.png" alt="Diagram batu jatuh ke bawah" class="w-full h-auto object-contain rounded-lg" style="background: white; padding: 8px; border: 1px solid var(--border); cursor: zoom-in;" onclick="openZoom(this)">
+                    </div>
+                    <strong style="color:var(--accent2)">Jawab: Kecepatan kereta tetap sama.</strong><br> 
+                    Batu bara yang jatuh ke bawah melalui lantai tidak memiliki komponen kecepatan horizontal relatif terhadap kereta saat meninggalkannya. Batu tersebut tetap membawa momentum horizontal yang sama persis seperti saat ia berada di dalam kereta. Oleh karena itu, kereta tidak mengalami perubahan laju.
+                </div>
+            </div>
+        </div>
+        
+        <div class="card p-5 mt-6 anim-up-d4" style="border-left: 4px solid var(--accent);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-brain text-3xl" style="color:var(--accent2);"></i>
+                <div>
+                    <h4 class="font-bold text-lg mb-1">Refleksi Awal</h4>
+                    <p class="text-base" style="color:var(--muted);">Mengapa truk yang melaju lambat lebih sulit dihentikan daripada motor yang melaju kencang? Mengapa bola bowling lebih merusak pin dibanding bola pingpong dengan kecepatan yang sama? Jawabannya terletak pada kombinasi <strong>massa</strong> dan <strong>kecepatan</strong>, yang kita sebut: <strong style="color:var(--accent2);">Momentum</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: DEFINISI MOMENTUM LINEAR (INTERAKTIF) -->
+<section class="slide" id="slide3">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Konsep Dasar</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Momentum Linear ($\vec{p}$)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Momentum linear (atau disebut "momentum" saja) dari sebuah benda didefinisikan sebagai <strong>hasil kali massa dan kecepatannya</strong>.</p>
+                <div class="math-block text-center" style="font-size: 1.6rem;">
+                    $$ \vec{p} = m\vec{v} $$                 </div>
+                <p class="text-base mt-4" style="color:var(--muted);">Di mana:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-2 text-base" style="color:var(--fg);">
+                    <li><strong>$\vec{p}$</strong> = Momentum linear (kg·m/s)</li>
+                    <li><strong>$m$</strong> = Massa benda (kg)</li>
+                    <li><strong>$\vec{v}$</strong> = Kecepatan sesaat (m/s)</li>
+                </ul>
+                
+                <div class="card p-4 mt-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-exclamation-circle mr-2" style="color:var(--accent2);"></i>Besaran Vektor!</h4>
+                    <p class="text-sm" style="color:var(--muted);">Karena kecepatan adalah vektor, momentum juga adalah <strong>vektor</strong>. Arah momentum selalu sama dengan arah kecepatan. Ini sangat krusial saat menganalisis tumbukan 2D nanti!</p>
+                </div>
+            </div>
+            
+            <!-- SIMULASI INTERAKTIF 1 -->
+            <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-gamepad" style="color:var(--accent2);"></i> Simulasi Vektor Momentum</h4>
+                <p class="text-sm mb-4" style="color:var(--muted);">Atur massa dan kecepatan untuk melihat bagaimana vektor momentum $\vec{p}$ berubah secara real-time.</p>
+                
+                <div class="p-3 rounded-lg mb-4" style="background: var(--bg); border: 1px solid var(--border);">
+                    <canvas id="momentumCanvas" width="500" height="220" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <div class="sim-control">
+                    <label>Massa ($m$):</label>
+                    <input type="range" id="massSlider" min="1" max="10" value="3" step="0.5" oninput="updateMomentumSim()">
+                    <span class="val-display" id="massVal">3.0 kg</span>
+                </div>
+
+                <div class="sim-control">
+                    <label>Kecepatan ($v$):</label>
+                    <input type="range" id="velSlider" min="0" max="10" value="5" step="0.5" oninput="updateMomentumSim()">
+                    <span class="val-display" id="velVal">5.0 m/s</span>
+                </div>
+
+                <div class="sim-control">
+                    <label>Arah Gerak:</label>
+                    <button class="direction-btn active" id="btnRight" onclick="setDirection(1)"><i class="fa-solid fa-arrow-right mr-1"></i> Kanan (+)</button>
+                    <button class="direction-btn" id="btnLeft" onclick="setDirection(-1)"><i class="fa-solid fa-arrow-left mr-1"></i> Kiri (-)</button>
+                </div>
+
+                <div class="mt-4 p-3 rounded-lg text-center" style="background: #f1f5f9; border: 1px dashed var(--border);">
+                    <span class="text-sm font-semibold" style="color:var(--muted);">Hasil Perhitungan:</span>
+                    <div class="text-2xl font-black mt-1" style="font-family: 'Courier New', monospace; color: var(--accent);">
+                        $\vec{p}$ = <span id="pResultVal">+15.0</span> kg·m/s
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: HUKUM NEWTON II DALAM BENTUK MOMENTUM -->
+<section class="slide" id="slide4">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Pembuktian</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Hukum Newton II & Momentum</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Hukum Newton II yang kita kenal ($\Sigma \vec{F} = m\vec{a}$) sebenarnya adalah bentuk khusus dari hukum yang lebih umum. Newton sendiri menyatakan hukumnya dalam bentuk <strong>perubahan momentum</strong>:</p>
+                
+                <div class="math-block text-center" style="font-size: 1.5rem;">
+                    $$ \Sigma \vec{F} = \frac{\Delta \vec{p}}{\Delta t} $$                 </div>
+
+                <p class="text-base mt-4" style="color:var(--muted);">Di mana:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-2 text-base" style="color:var(--fg);">
+                    <li><strong>$\Sigma \vec{F}$</strong> = Gaya neto yang bekerja pada sistem</li>
+                    <li><strong>$\Delta \vec{p}$</strong> = Perubahan momentum ($\vec{p}_2 - \vec{p}_1$)</li>
+                    <li><strong>$\Delta t$</strong> = Selang waktu perubahan terjadi</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col gap-4 justify-center">
+                <div class="card p-5" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-3">Penurunan ke Bentuk $F=ma$</h4>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Jika massa benda konstan ($m_1 = m_2 = m$), maka:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ \Sigma \vec{F} = \frac{\Delta \vec{p}}{\Delta t} = \frac{m\vec{v}_2 - m\vec{v}_1}{\Delta t} $$                         $$ \Sigma \vec{F} = m \left( \frac{\vec{v}_2 - \vec{v}_1}{\Delta t} \right) $$                         $$ \Sigma \vec{F} = m\vec{a} $$                     </div>
+                </div>
+                
+                <div class="card p-5 text-center" style="background: linear-gradient(135deg, rgba(220,38,38,0.05), rgba(30,41,59,0.05));">
+                    <i class="fa-solid fa-rocket text-3xl mb-2" style="color:var(--accent2);"></i>
+                    <span class="font-bold text-lg block mb-2" style="color:var(--accent);">Mengapa Bentuk Momentum Lebih Umum?</span>
+                    <p class="text-sm" style="color:var(--muted);">Karena $F=ma$ mengasumsikan massa konstan. Namun, pada sistem seperti <strong>roket</strong>, massa bahan bakar terus berkurang saat ditembakkan. Hukum $F = \frac{\Delta p}{\Delta t}$ tetap berlaku, sementara $F=ma$ menjadi tidak valid!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: IMPULS DAN TEOREMA IMPULS-MOMENTUM (INTERAKTIF) -->
+<section class="slide" id="slide5">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Konsep Kunci</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Impuls & Teorema Impuls-Momentum</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Dari persamaan Hukum Newton II sebelumnya, jika kita kalikan kedua ruas dengan $\Delta t$, kita mendapatkan konsep <strong>Impuls</strong>.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.4rem;">
+                    $$ \vec{F}\Delta t = \Delta \vec{p} $$                 </div>
+
+                <div class="card p-5 mt-4" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2">Definisi Impuls ($\vec{J}$)</h4>
+                    <p class="text-base mb-3" style="color:var(--fg);">Impuls adalah hasil kali gaya rata-rata dengan selang waktu bekerjanya gaya tersebut.</p>
+                    <div class="math-block-slate math-block text-center" style="font-size: 1.2rem; margin-bottom: 0;">
+                        $$ \vec{J} = \vec{F}_{avg} \Delta t $$                     </div>
+                </div>
+
+                <div class="card p-4 mt-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-star mr-2" style="color:var(--accent2);"></i>Teorema Impuls-Momentum:</h4>
+                    <p class="text-sm" style="color:var(--muted);">Impuls yang diberikan pada suatu benda sama dengan perubahan momentum benda tersebut. $\vec{J} = \Delta \vec{p}$</p>
+                </div>
+            </div>
+            
+            <!-- SIMULASI INTERAKTIF 2: GRAFIK IMPULS -->
+            <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-gamepad" style="color:var(--accent2);"></i> Simulasi: Waktu Tumbukan vs Gaya</h4>
+                <p class="text-sm mb-3" style="color:var(--muted);">Seseorang melompat dengan perubahan momentum konstan. Ubah waktu tumbukan ($\Delta t$) untuk melihat efeknya pada gaya rata-rata!</p>
+                
+                <div class="p-3 rounded-lg mb-3" style="background: var(--bg); border: 1px solid var(--border);">
+                    <canvas id="impulseCanvas" width="500" height="280" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <div class="sim-control">
+                    <label>Waktu Tumbukan ($\Delta t$):</label>
+                    <input type="range" id="deltaTSlider" min="5" max="500" value="20" step="5" oninput="updateImpulseSim()">
+                    <span class="val-display" id="deltaTVal">0.020 s</span>
+                </div>
+
+                <div class="p-3 rounded-lg text-center mt-2" style="background: #f1f5f9; border: 1px solid var(--border);">
+                    <div class="text-sm font-semibold" style="color:var(--muted);">Asumsi: Δp = 60 kg·m/s (Konstan)</div>
+                    <div class="text-xl font-black mt-2" style="font-family: 'Courier New', monospace; color: var(--accent2);">
+                        F<sub>avg</sub> = <span id="fResultVal">3000</span> N
+                    </div>
+                    <div class="text-sm mt-1 font-semibold" id="impulseStatus" style="color: #16a34a;">Gaya Sangat Besar (Tembok Keras)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 anim-up-d3" style="border-left: 4px solid var(--accent);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-shield-halved text-3xl" style="color:var(--accent);"></i>
+                <div>
+                    <h4 class="font-bold text-lg mb-2">Aplikasi Keseharian: Mengurangi Gaya</h4>
+                    <p class="text-base" style="color:var(--muted);">Karena $\Delta p$ seringkali tetap dalam suatu tumbukan, satu-satunya cara untuk mengurangi gaya ($F$) yang merusak adalah dengan <strong>memperbesar waktu tumbukan ($\Delta t$)</strong>. Inilah mengapa:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1 text-base" style="color:var(--fg);">
+                        <li>Kita melipat kaki saat mendarat dari lompatan.</li>
+                        <li>Boxer mengikuti pukulan (move with the punch) agar tidak terkapar.</li>
+                        <li>Mobil memiliki <em>crumple zone</em> (zona kerut) yang sengaja deformasi saat tabrakan.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: STUDI KASUS IMPULS (SERVIS TENIS) -->
+<section class="slide" id="slide6">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Studi Kasus</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Gaya pada Servis Tenis</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6 anim-up-d2">
+            <div>
+                <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                    Untuk pemain top, bola tenis bisa meninggalkan raket pada servis dengan kecepatan sekitar 55 m/s (sekitar 120 mi/h). Jika bola bermassa 0,060 kg dan bersentuhan dengan raket selama sekitar 4 ms ($4 \times 10^{-3}$ s), perkirakan gaya rata-rata pada bola. Apakah gaya ini cukup besar untuk mengangkat orang bermassa 60 kg?
+                </p>
+                <div class="p-4 rounded-lg" style="background: var(--bg); border: 1px solid var(--border);">
+                    <div class="font-bold text-base mb-2" style="color:var(--accent);">Diketahui:</div>
+                    <ul class="space-y-1 text-sm" style="color:var(--fg);">
+                        <li>Massa bola, $m = 0,060$ kg</li>
+                        <li>Kecepatan awal, $v_1 \approx 0$ (bola dilempar pelan ke atas)</li>
+                        <li>Kecepatan akhir, $v_2 = 55$ m/s</li>
+                        <li>Waktu kontak, $\Delta t = 4 \times 10^{-3}$ s</li>
+                    </ul>
+                    <div class="mt-3 text-sm font-bold" style="color:var(--accent2);">Ditanya: Gaya rata-rata ($F_{avg}$) = ?</div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center">
+                <img src="gambar/gambar-4.png" alt="Ilustrasi Servis Tenis" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 300px; border: 1px solid var(--border); background: white; cursor: zoom-in;" onclick="openZoom(this)">
+                <span class="text-xs font-semibold" style="color:var(--muted);">Ilustrasi</span>
+            </div>
+        </div>
+
+        <div class="anim-up-d3">
+            <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Langkah Penyelesaian</h3>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Menghitung Perubahan Momentum ($\Delta p$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Momentum berubah dari nol (saat hampir diam di udara) menjadi $m\vec{v}_2$. Kita mengabaikan gaya gravitasi selama kontak singkat ini karena jauh lebih kecil daripada gaya raket.</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ \Delta p = m v_2 - m v_1 $$ 
+                        $$ \Delta p = (0,060)(55) - 0 = \mathbf{3,3 \text{ kg.m/s}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Menghitung Gaya Rata-rata ($F_{avg}$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Gunakan Teorema Impuls-Momentum: $\vec{J} = \Delta \vec{p} = \vec{F}_{avg}\Delta t$</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ F_{avg} = \frac{\Delta p}{\Delta t} $$ 
+                        $$ F_{avg} = \frac{3,3}{4 \times 10^{-3}} = \mathbf{825 \text{ N}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Perbandingan dan Analisis</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Gaya rata-rata yang bekerja pada bola tenis adalah <strong>825 N</strong>. Bagaimana angka ini secara fisika?</p>
+                    <p class="mb-2">Berat orang bermassa 60 kg adalah $w = mg = (60)(9,8) \approx 600$ N.</p>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kesimpulan:</strong> Gaya raket pada bola (825 N) lebih besar dari berat orang dewasa (600 N)! Ini menunjukkan betapa masifnya gaya impulsif dalam waktu singkat. Gravitasi yang bekerja pada bola (0,59 N) dapat diabaikan dibandingkan 825 N ini.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 7: KEKEKALAN MOMENTUM LINEAR -->
+<section class="slide" id="slide7">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Hukum Kekekalan</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Kekekalan Momentum Linear</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Konsep momentum sangat powerful karena sifatnya yang <strong>kekal</strong> (conserved). Jika tidak ada gaya luar neto yang bekerja pada suatu sistem, total momentum sistem tersebut tidak akan berubah.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.5rem;">
+                    $$ \Sigma \vec{p}_{awal} = \Sigma \vec{p}_{akhir} $$                 </div>
+
+                <div class="card p-5 mt-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2">Syarat Kekekalan Momentum:</h4>
+                    <p class="text-base" style="color:var(--fg);">Berlaku jika dan hanya jika <strong>gaya luar neto pada sistem adalah nol</strong> ($\Sigma \vec{F}_{ext} = 0$).</p>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Sistem seperti ini disebut <strong>sistem terisolasi</strong>. Gaya-gaya internal (saling bertumbukan) boleh ada, karena menghasilkan impuls yang sama besar dan berlawanan arah sehingga saling meniadakan.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 justify-center">
+                <h3 class="text-2xl font-bold" style="color:var(--accent);">Derivasi Matematis</h3>
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Dari Hukum Newton III</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="mb-2">Saat benda A dan B bertumbukan, gaya yang dikerahkan A pada B sama besar namun berlawanan arah dengan gaya B pada A:</p>
+                        <div class="math-block-slate math-block" style="font-size: 1rem;">
+                            $$ \vec{F}_{AB} = -\vec{F}_{BA} $$                         </div>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Substitusi ke Hukum Newton II</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="mb-2">Karena waktu kontak $\Delta t$ sama, impuls pada A dan B juga sama besar namun berlawanan:</p>
+                        <div class="math-block-slate math-block" style="font-size: 1rem;">
+                            $$ \frac{\Delta \vec{p}_A}{\Delta t} = -\frac{\Delta \vec{p}_B}{\Delta t} \implies \Delta \vec{p}_A = -\Delta \vec{p}_B $$                         </div>
+                        <p class="mt-2 text-sm" style="color:var(--muted);">Perubahan momentum A sama dengan negatif perubahan momentum B.</p>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Kesimpulan Kekekalan</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="mb-2">Jika $\Delta \vec{p}_A = -\Delta \vec{p}_B$, maka total perubahan momentum sistem adalah nol:</p>
+                        <div class="math-block" style="font-size: 1rem;">
+                            $$ \Delta \vec{p}_A + \Delta \vec{p}_B = 0 $$                             $$ \vec{p}_{A,i} + \vec{p}_{B,i} = \vec{p}_{A,f} + \vec{p}_{B,f} $$                         </div>
+                        <div class="mt-2 p-2 rounded text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a;">
+                            <i class="fa-solid fa-check-circle mr-1"></i> Inilah Hukum Kekekalan Momentum!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 8: JENIS-JENIS TUMBUKAN -->
+<section class="slide" id="slide8">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Klasifikasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Jenis-Jenis Tumbukan</h2>
+        
+        <p class="text-lg mb-6 anim-up-d2" style="color:var(--muted);">Tumbukan terjadi ketika dua benda saling bersentuhan dalam waktu yang sangat singkat. Kita mengklasifikasikan tumbukan berdasarkan apakah <strong>energi kinetik</strong> ikut kekal atau tidak.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 anim-up-d2">
+            <div class="card p-6 text-center" style="border-top: 4px solid #16a34a;">
+                <i class="fa-solid fa-circle-check text-4xl mb-3" style="color:#16a34a;"></i>
+                <h3 class="text-xl font-bold mb-2" style="color:#16a34a;">Lenting Sempurna<br>(Elastic)</h3>
+                <p class="text-sm mb-4" style="color:var(--muted);">Energi kinetik total sistem <strong>dilestarikan</strong> (tidak ada yang hilang jadi panas/bunyi).</p>
+                <div class="p-2 rounded text-sm font-mono" style="background: #f1f5f9;">$\Sigma K_i = \Sigma K_f$</div>
+            </div>
+
+            <div class="card p-6 text-center" style="border-top: 4px solid #eab308;">
+                <i class="fa-solid fa-circle-half-stroke text-4xl mb-3" style="color:#eab308;"></i>
+                <h3 class="text-xl font-bold mb-2" style="color:#eab308;">Lenting Sebagian<br>(Inelastic)</h3>
+                <p class="text-sm mb-4" style="color:var(--muted);">Sebagian energi kinetik berubah jadi bentuk energi lain (panas, deformasi). Benda tidak menyatu.</p>
+                <div class="p-2 rounded text-sm font-mono" style="background: #f1f5f9;">$\Sigma K_i > \Sigma K_f$</div>
+            </div>
+
+            <div class="card p-6 text-center" style="border-top: 4px solid var(--accent2);">
+                <i class="fa-solid fa-circle-xmark text-4xl mb-3" style="color:var(--accent2);"></i>
+                <h3 class="text-xl font-bold mb-2" style="color:var(--accent2);">Tidak Lenting Sama Sekali<br>(Perfectly Inelastic)</h3>
+                <p class="text-sm mb-4" style="color:var(--muted);">Benda-benda saling menempel dan bergerak bersama setelah tumbukan. Kehilangan energi kinetik <strong>maksimal</strong>.</p>
+                <div class="p-2 rounded text-sm font-mono" style="background: #f1f5f9;">$v'_A = v'_B = v'$</div>
+            </div>
+        </div>
+
+        <div class="card p-5 anim-up-d3" style="border-left: 4px solid var(--accent);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-scale-balanced text-3xl" style="color:var(--accent);"></i>
+                <div>
+                    <h4 class="font-bold text-lg mb-1">Aturan Emas Tumbukan:</h4>
+                    <p class="text-base" style="color:var(--muted);">Terlepas dari jenis tumbukannya (lenting atau tidak), <strong style="color:var(--accent2);">Hukum Kekekalan Momentum SELALU berlaku</strong> selama tidak ada gaya luar neto! Energi kinetik mungkin tidak kekal, tapi momentum selalu kekal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 9: TUMBUKAN TIDAK LENTING SAMA SEKALI (INTERAKTIF) -->
+<section class="slide" id="slide9">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Studi Kasus</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Tumbukan Tidak Lenting Sama Sekali</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Kasus paling sederhana: Dua benda bertumbukan dan <strong>menyatu</strong>. Mari kita gunakan Hukum Kekekalan Momentum untuk menemukan kecepatan akhirnya.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.3rem;">
+                    $$ m_A v_A + m_B v_B = (m_A + m_B) v' $$                 </div>
+
+                <div class="card p-5 mt-4" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2">Bagaimana dengan Energi Kinetik?</h4>
+                    <p class="text-sm" style="color:var(--muted);">Karena benda menyatu, selalu ada kehilangan energi kinetik. Energi ini diubah menjadi panas, bunyi, dan merusak bentuk benda (deformasi). Mari kita hitung berapa besar kerugiannya di simulasi ini!</p>
+                </div>
+            </div>
+            
+            <!-- SIMULASI INTERAKTIF 3: KERETA API -->
+            <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-gamepad" style="color:var(--accent2);"></i> Simulasi: Tabrakan Kereta Api</h4>
+                <p class="text-sm mb-3" style="color:var(--muted);">Kereta A melaju menabrak Kereta B yang diam. Keduanya lalu menyatu. Atur variabelnya!</p>
+                
+                <div class="p-3 rounded-lg mb-3" style="background: var(--bg); border: 1px solid var(--border);">
+                    <canvas id="inelasticCanvas" width="500" height="200" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <div class="sim-control">
+                    <label>Massa Kereta A:</label>
+                    <input type="range" id="massASlider" min="5" max="20" value="10" step="1" oninput="updateInelasticSim()">
+                    <span class="val-display" id="massAVal">10 ton</span>
+                </div>
+
+                <div class="sim-control">
+                    <label>Massa Kereta B:</label>
+                    <input type="range" id="massBSlider" min="5" max="20" value="10" step="1" oninput="updateInelasticSim()">
+                    <span class="val-display" id="massBVal">10 ton</span>
+                </div>
+
+                <div class="sim-control">
+                    <label>Kecepatan A ($v_A$):</label>
+                    <input type="range" id="velASlider" min="5" max="40" value="24" step="1" oninput="updateInelasticSim()">
+                    <span class="val-display" id="velAVal">24 m/s</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-4 text-center">
+                    <div class="p-2 rounded-lg" style="background: #f1f5f9; border: 1px solid var(--border);">
+                        <div class="text-xs font-semibold" style="color:var(--muted);">Kecepatan Akhir (v'):</div>
+                        <div class="text-xl font-black" style="color: var(--accent2);" id="vPrimeResult">12.0 m/s</div>
+                    </div>
+                    <div class="p-2 rounded-lg" style="background: #f1f5f9; border: 1px solid var(--border);">
+                        <div class="text-xs font-semibold" style="color:var(--muted);">Energi Kinetik Hilang:</div>
+                        <div class="text-xl font-black" style="color: var(--accent);" id="keLostResult">1.44 MJ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="anim-up-d3">
+            <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Contoh Soal: Gerbong Kereta</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start mb-4">
+                <div class="md:col-span-3">
+                    <p class="text-base" style="color:var(--fg); line-height: 1.7;">
+                        Sebuah gerbong kereta bermassa 10 ton melaju dengan kecepatan 24,0 m/s menabrak gerbong identik yang diam. Jika mereka saling mengait, berapa kecepatan mereka sesudah tumbukan dan berapa energi kinetik yang hilang?
+                    </p>
+                </div>
+                <div class="md:col-span-2 flex flex-col items-center justify-center">
+                    <img src="gambar/gambar-5.png" alt="Ilustrasi Tabrakan Kereta" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 200px; border: 1px solid var(--border); background: white; cursor: zoom-in;" onclick="openZoom(this)">
+                    <span class="text-xs font-semibold" style="color:var(--muted);">Ilustrasi</span>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Menghitung Kecepatan Akhir ($v'$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Gunakan kekekalan momentum untuk tumbukan tidak lenting (konversi 10 ton = 10.000 kg):</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m_A v_A + m_B v_B = (m_A + m_B) v' $$                         $$ (10.000)(24,0) + (10.000)(0) = (10.000 + 10.000) v' $$                         $$ 240.000 = 20.000 v' \implies v' = \mathbf{12,0 \text{ m/s}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Menghitung Energi Kinetik yang Hilang</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Bandingkan Energi Kinetik sebelum dan sesudah tumbukan:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ K_i = \frac{1}{2}m_A v_A^2 + \frac{1}{2}m_B v_B^2 = \frac{1}{2}(10.000)(24)^2 + 0 = \mathbf{2.880.000 \text{ J}} $$                         $$ K_f = \frac{1}{2}(m_A+m_B)v'^2 = \frac{1}{2}(20.000)(12)^2 = \mathbf{1.440.000 \text{ J}} $$                     </div>
+                    <p class="mt-2">Energi yang hilang (berubah jadi panas/bunyi/deformasi):</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ \Delta K = K_i - K_f = 2.880.000 - 1.440.000 = \mathbf{1.440.000 \text{ J}} \text{ (1,44 MJ)} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(220, 38, 38, 0.1); color: #dc2626; border-left: 3px solid #dc2626;">
+                        <i class="fa-solid fa-bolt mr-1"></i> <strong>Insight:</strong> Tepat setengah (50%) dari energi kinetik awal hilang! Ini karena massa benda yang bertumbukan sama besar. Tumbukan tidak lenting selalu membuang energi kinetik terbesar saat massa kedua benda sama.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 10: TUMBUKAN LENTING SEMPURNA (1D) -->
+<section class="slide" id="slide10">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Klasifikasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Tumbukan Lenting Sempurna (1D)</h2>
+        
+        <div class="mb-6 anim-up-d2">
+            <p class="text-lg mb-4" style="color:var(--muted);">Pada tumbukan lenting sempurna (<em>elastic collision</em>), selain momentum, <strong>energi kinetik total sistem juga kekal</strong>. Tidak ada energi yang hilang menjadi panas atau bunyi.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="math-block text-center" style="font-size: 1.1rem;">
+                    Kekekalan Momentum:<br> $$ m_A v_A + m_B v_B = m_A v'_A + m_B v'_B $$                 </div>
+                <div class="math-block-slate math-block text-center" style="font-size: 1.1rem;">
+                    Kekekalan Energi Kinetik:<br> $$ \frac{1}{2}m_A v_A^2 + \frac{1}{2}m_B v_B^2 = \frac{1}{2}m_A v'^2_A + \frac{1}{2}m_B v'^2_B $$                 </div>
+            </div>
+        </div>
+
+        <div class="anim-up-d3">
+            <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Derivasi Rumus Cepat (1 Dimensi)</h3>
+            <p class="text-base mb-4" style="color:var(--muted);">Menghitung tumbukan lenting dengan persamaan kuadratik sulit. Mari kita turunkan rumus praktis yang lebih sederhana:</p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Pisahkan variabel massa di satu ruas</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Dari Kekekalan Momentum, pindahkan suku-suku $m_A$ ke kiri dan $m_B$ ke kanan:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m_A(v_A - v'_A) = m_B(v'_B - v_B) $$ 
+                    </div>
+                    <p class="mt-2">Dari Kekekalan Energi Kinetik, lakukan hal yang sama:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m_A(v_A^2 - v'^2_A) = m_B(v'^2_B - v_B^2) $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Faktorkan persamaan Energi Kinetik</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Gunakan identitas aljabar $a^2 - b^2 = (a-b)(a+b)$ pada ruas kiri dan kanan:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m_A(v_A - v'_A)(v_A + v'_A) = m_B(v'_B - v_B)(v'_B + v_B) $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Bagi Energi Kinetik dengan Momentum</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Bagi persamaan hasil langkah 2 dengan persamaan hasil langkah 1. Suku $m_A(v_A - v'_A)$ akan coret dengan $m_B(v'_B - v_B)$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ v_A + v'_A = v'_B + v_B $$                     </div>
+                    <p class="mt-2">Atau dapat ditulis ulang menjadi rumus cepat:</p>
+                    <div class="math-block text-center" style="font-size: 1.3rem;">
+                        $$ v_A - v_B = -(v'_A - v'_B) $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Artinya:</strong> Laju relatif mendekat sama dengan laju relatif menjauh. Rumus ini menghindari kita dari persamaan kuadrat!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 mt-6 anim-up-d4" style="border-left: 4px solid var(--accent);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-circle-nodes text-3xl" style="color:var(--accent);"></i>
+                <div>
+                    <h4 class="font-bold text-lg mb-2">Kasus Khusus: Massa Sama ($m_A = m_B$)</h4>
+                    <p class="text-base mb-3" style="color:var(--muted);">Apa yang terjadi jika Bola A menabrak Bola B yang diam, dan keduanya bermassa sama? Gunakan rumus cepat di atas:</p>
+                    <div class="prompt-wrapper" style="background: #f8fafc;">
+                        <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Buktikan bahwa $v'_A = 0$ dan $v'_B = v_A$</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Bukti</button>
+                        <div class="discussion-box">
+                            <p class="mb-2">Dengan $m_A = m_B = m$ dan $v_B = 0$, Kekekalan Momentum menjadi:</p>
+                            <div class="math-block-slate math-block" style="font-size: 1rem;">
+                                $$ m v_A = m v'_A + m v'_B \implies v_A = v'_A + v'_B \quad \text{(i)} $$                             </div>
+                            <p class="mt-2">Rumus Cepat menjadi:</p>
+                            <div class="math-block-slate math-block" style="font-size: 1rem;">
+                                $$ v_A - 0 = v'_B - v'_A \implies v_A = v'_B - v'_A \quad \text{(ii)} $$                             </div>
+                            <p class="mt-2">Jumlahkan persamaan (i) dan (ii):</p>
+                            <div class="math-block" style="font-size: 1rem;">
+                                $$ 2v_A = 2v'_B \implies \mathbf{v'_B = v_A} $$                                 $$ v'_A = v_A - v'_B = v_A - v_A = \mathbf{0} $$                             </div>
+                            <p class="mt-2 text-sm" style="color:var(--muted);"><strong>Kesimpulan:</strong> Bola A berhenti total, Bola B bergerak persis dengan kecepatan awal A. Ini yang terjadi pada ayunan Newton!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 11: TUMBUKAN 2D -->
+<section class="slide" id="slide11">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Vektor Momentum</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Tumbukan 2 Dimensi</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Di dunia nyata, tumbukan sering terjadi tidak searah (1D), melainkan miring (2D). Karena momentum adalah <strong>vektor</strong>, Hukum Kekekalan Momentum harus berlaku pada <strong>setiap sumbu secara terpisah</strong>!</p>
+                
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2">Kekekalan Momentum Sumbu-X & Y:</h4>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \Sigma p_{x, awal} = \Sigma p_{x, akhir} $$                         $$ \Sigma p_{y, awal} = \Sigma p_{y, akhir} $$                     </div>
+                </div>
+
+                <div class="card p-5" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2">Ekspansi Vektor (Sumbu X dan Y):</h4>
+                    <p class="text-sm mb-2" style="color:var(--muted);">Jika benda A menabrak benda B (awalnya diam) membentuk sudut $\theta'_A$ dan $\theta'_B$ terhadap sumbu-x:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m_A v_A = m_A v'_A \cos\theta'_A + m_B v'_B \cos\theta'_B \quad \text{(Sumbu X)} $$                         $$ 0 = m_A v'_A \sin\theta'_A + m_B v'_B \sin\theta'_B \quad \text{(Sumbu Y)} $$                     </div>
+                    <p class="text-sm mt-3" style="color:var(--muted);">Untuk tumbukan lenting sempurna dengan massa sama, salah satu diam, sudut antara kedua benda setelah tumbukan selalu $90^\circ$ ($\theta'_A + \theta'_B = 90^\circ$).</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center">
+                <img src="gambar/gambar-6.png" alt="Ilustrasi Tumbukan 2D" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 350px; border: 1px solid var(--border); background: white; cursor: zoom-in;" onclick="openZoom(this)">
+                <span class="text-xs font-semibold" style="color:var(--muted);">Ilustrasi Tumbukan Tidak Segaris (Klik untuk perbesar)</span>
+            </div>
+        </div>
+
+        <div class="anim-up-d3">
+            <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Latihan Soal: Biliar 2D</h3>
+            <p class="text-base mb-4" style="color:var(--fg);">Bola biliar A bergerak dengan kecepatan 3,0 m/s menabrak bola B yang identik dan diam. Setelah tumbukan lenting sempurna, bola A memantul membentuk sudut $45^\circ$ di atas sumbu-x, dan bola B bergerak membentuk sudut $45^\circ$ di bawah sumbu-x. Berapa kecepatan masing-masing bola setelah tumbukan?</p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Analisis Sumbu Y</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Karena awalnya tidak ada momentum di sumbu-Y, total momentum sumbu-Y setelah tumbukan harus nol:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ 0 = m v'_A \sin(45^\circ) + m v'_B \sin(-45^\circ) $$                     </div>
+                    <p class="mt-2">Karena massa sama dan $\sin(45^\circ) = \sin(-45^\circ)$ (hanya beda tanda), satu-satunya cara agar jumlahnya nol adalah:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \mathbf{v'_A = v'_B} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Analisis Sumbu X</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Momentum awal hanya di sumbu-X. Substitusikan $v'_A = v'_B$ ke persamaan sumbu-X:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m(3,0) = m v'_A \cos(45^\circ) + m v'_B \cos(-45^\circ) $$                         $$ 3,0 = v'_A \cos(45^\circ) + v'_A \cos(45^\circ) \quad (\text{karena } \cos(-45^\circ) = \cos(45^\circ)) $$                         $$ 3,0 = 2 v'_A (0,707) $$                     </div>
+                    <p class="mt-2">Maka, kecepatan masing-masing bola adalah:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ v'_A = \frac{3,0}{1,414} = \mathbf{2,1 \text{ m/s}} $$                         $$ v'_B = \mathbf{2,1 \text{ m/s}} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kesimpulan:</strong> Keduanya bergerak dengan kecepatan sama, saling membentuk sudut $90^\circ$. Ini membuktikan hukum tumbukan lenting 2D untuk massa sama!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 12: PENDULUM BALISTIK -->
+<section class="slide" id="slide12">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(30,41,59,0.1);color:var(--accent);">Studi Kasus Integratif</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Pendulum Balistik</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6 anim-up-d2">
+            <div>
+                <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                    Pendulum balistik adalah alat untuk mengukur kecepatan peluru. Sebuah peluru bermassa $m$ ditembakkan horizontal dan menyangkut di balok kayu bermassa $M$ yang digantung. Keduanya lalu berayun naik mencapai ketinggian maksimum $h$.
+                </p>
+                <div class="p-4 rounded-lg" style="background: var(--bg); border: 1px solid var(--border);">
+                    <div class="font-bold text-base mb-2" style="color:var(--accent);">Diketahui:</div>
+                    <ul class="space-y-1 text-sm" style="color:var(--fg);">
+                        <li>Massa peluru, $m$</li>
+                        <li>Massa balok, $M$</li>
+                        <li>Ketinggian ayunan maksimum, $h$</li>
+                    </ul>
+                    <div class="mt-3 text-sm font-bold" style="color:var(--accent2);">Ditanya: Kecepatan awal peluru ($v$) = ?</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col items-center justify-center">
+                    <img src="gambar/gambar-7a.png" alt="Pendulum Saat Tumbukan" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 220px; border: 1px solid var(--border); background: white; cursor: zoom-in;" onclick="openZoom(this)">
+                    <span class="text-xs font-semibold" style="color:var(--muted);">Saat Tumbukan</span>
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <img src="gambar/gambar-7b.png" alt="Pendulum Saat Ayun Maks" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 220px; border: 1px solid var(--border); background: white; cursor: zoom-in;" onclick="openZoom(this)">
+                    <span class="text-xs font-semibold" style="color:var(--muted);">Saat Ketinggian Maks</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="anim-up-d3">
+            <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Langkah Penyelesaian (2 Tahap)</h3>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Tahap 1: Tumbukan (Kekekalan Momentum)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Saat peluru menghantam balok, terjadi tumbukan tidak lenting sama sekali. Gunakan kekekalan momentum sesaat sebelum dan sesudah tumbukan:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ \Sigma p_{sebelum} = \Sigma p_{sesuduh} $$                         $$ m v + 0 = (m + M) v' $$                     </div>
+                    <p class="mt-2">Di mana $v'$ adalah kecepatan balok+peluru segera setelah tumbukan (sebelum mulai naik).</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Tahap 2: Ayunan Naik (Kekekalan Energi Mekanik)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Setelah tumbukan, sistem berayun naik. Gaya tegangan tali tidak melakukan usaha, sehingga energi mekanik kekal. Energi kinetik sesudah tumbukan berubah jadi energi potensial gravitasi di ketinggian $h$.</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ EK_{sesudah} = EP_{maks} $$                         $$ \frac{1}{2}(m + M)v'^2 = (m + M)gh $$                     </div>
+                    <p class="mt-2">Massa $(m+M)$ dicoret, kita dapatkan kecepatan awal ayunannya:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ v' = \sqrt{2gh} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Substitusi: Mencari Kecepatan Peluru ($v$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2">Substitusikan persamaan $v'$ dari Tahap 2 ke persamaan momentum di Tahap 1:</p>
+                    <div class="math-block-slate math-block" style="font-size: 1rem;">
+                        $$ m v = (m + M)\sqrt{2gh} $$                     </div>
+                    <p class="mt-2">Maka, kecepatan awal peluru adalah:</p>
+                    <div class="math-block" style="font-size: 1.2rem;">
+                        $$ v = \frac{m + M}{m} \sqrt{2gh} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kunci Sukses:</strong> Memisahkan masalah menjadi dua tahap sangat penting! Kita tidak bisa pakai kekekalan energi di tahap 1 (karena tumbukan tidak lenting = ada energi hilang), dan tidak bisa pakai kekekalan momentum di tahap 2 (karena ada gaya gravitasi eksternal).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 mt-6 anim-up-d4" style="border-left: 4px solid var(--accent2);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-pen-ruler text-3xl" style="color:var(--accent2);"></i>
+                <div class="flex-1">
+                    <h4 class="font-bold text-lg mb-2">Latihan Soal</h4>
+                    <p class="text-base mb-4" style="color:var(--fg);">Sebuah peluru bermassa 10 g ditembakkan horizontal dan menyangkut di balok kayu bermassa 2,0 kg yang digantung. Jika balok dan peluru berayun naik mencapai ketinggian 15 cm, berapakah kecepatan peluru saat keluar dari laras senapan?</p>
+                    
+                    <div class="prompt-wrapper" style="background: #f8fafc;">
+                        <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Lihat Penyelesaian</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                        <div class="discussion-box">
+                            <p class="mb-2"><strong>Diketahui:</strong> $m = 0,010$ kg, $M = 2,0$ kg, $h = 0,15$ m.</p>
+                            <p class="mt-3 mb-1"><strong>Tahap 2 (Energi Mekanik):</strong> Cari $v'$ terlebih dahulu:</p>
+                            <div class="math-block-slate math-block" style="font-size: 1rem;">
+                                $$ v' = \sqrt{2(9,8)(0,15)} = \sqrt{2,94} = 1,71 \text{ m/s} $$                             </div>
+                            <p class="mt-3 mb-1"><strong>Tahap 1 (Momentum):</strong> Cari $v$:</p>
+                            <div class="math-block" style="font-size: 1rem;">
+                                $$ 0,010 \cdot v = (0,010 + 2,0)(1,71) $$                                 $$ 0,010 \cdot v = 2,010 \times 1,71 = 3,44 $$                                 $$ v = \frac{3,44}{0,010} = \mathbf{344 \text{ m/s}} $$                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 13: RANGKUMAN VISUAL -->
+<section class="slide" id="slide13">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(220,38,38,0.1);color:var(--accent2);">Rangkuman</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-8 anim-up-d1">Peta Konsep: Momentum & Tumbukan</h2>
+        
+        <div class="flex flex-col items-center justify-center gap-5 anim-up-d2">
+            <!-- Step 1 -->
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid var(--accent);">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Penyebab Perubahan (Interaksi)</div>
+                <div class="text-3xl font-black mt-2" style="color:var(--accent);">Gaya & Waktu ($\vec{F}\Delta t$)</div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <!-- Step 2 -->
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid var(--accent2);">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Transfer / Proses</div>
+                <div class="text-3xl font-black mt-2" style="color:var(--accent2);">Impuls ($\vec{J} = \Delta \vec{p}$)</div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <!-- Step 3 -->
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid var(--accent);">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Besaran Fisika yang Berubah</div>
+                <div class="text-3xl font-black mt-2" style="color:var(--accent);">Perubahan Momentum ($m\vec{v}_2 - m\vec{v}_1$)</div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <!-- Step 4 -->
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid #16a34a;">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Hukum Kekekalan (Sistem Terisolasi)</div>
+                <div class="text-3xl font-black mt-2" style="color:#16a34a;">$\Sigma \vec{p}_{awal} = \Sigma \vec{p}_{akhir}$</div>
+            </div>
+        </div>
+
+        <div class="card p-5 mt-8 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 text-center" style="color:var(--accent);">Poin Penting yang Harus Diingat:</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Momentum adalah Vektor:</strong> Arah sangat penting! Pada tumbukan 2D, kekekalan momentum harus dipisah per sumbu (X dan Y).</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Memperbesar $\Delta t$ Mengurangi $F$:</strong> Ini dasar dari airbag, matras, dan teknik mendarat yang aman.</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Tumbukan Tidak Lenting:</strong> Momentum kekal, tapi Energi Kinetik TIDAK kekal (selalu ada yang hilang jadi panas/bunyi).</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Pendulum Balistik:</strong> Contoh klasika memisahkan masalah menjadi tahap Momentum (tumbukan) dan tahap Energi (ayunan).</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 14: PENUTUPAN -->
+<section class="slide" id="slide14">
+    <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
+        <div class="flex items-center gap-6 mb-8 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:250px;width:250px;object-fit:contain;border-radius:8px;">
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-black text-center mb-4 anim-up-d1" style="color:var(--accent);">Terima Kasih!</h1>
+        <p class="text-xl md:text-2xl text-center max-w-2xl mb-8 anim-up-d2" style="color:var(--muted);line-height:1.7;">Momentum tidak pernah musnah; ia hanya berpindah dan berubah bentuk. Seperti hidup, teruslah bergerak maju!</p>
+        
+        <div class="card p-6 max-w-2xl w-full anim-up-d3" style="background: linear-gradient(135deg, rgba(220,38,38,0.05), rgba(30,41,59,0.05));">
+            <div class="text-center mb-4">
+                <div class="font-bold text-xl" style="color:var(--accent);">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div>
+                <div class="text-base" style="color:var(--muted);">Dosen Pengampu Fisika Dasar</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+                <div class="flex items-center gap-3 justify-center"><i class="fa-solid fa-envelope w-5 text-center" style="color:var(--accent2);"></i><span>fidelis.gigih@atmi.ac.id</span></div>
+                <div class="flex items-center gap-3 justify-center"><i class="fa-solid fa-building w-5 text-center" style="color:var(--accent2);"></i><span>Lab WAP &ndash; TMI</span></div>
+            </div>
+        </div>
+
+        <p class="mt-10 text-sm anim-up-d4" style="color:var(--muted);">Politeknik ATMI Surakarta &mdash; Teknik Mesin Industri</p>
+    </div>
+</section>
+
+</div> <!-- End of slide-area -->
+
+<script>
+    // --- NAVIGATION SYSTEM ---
+    const slides = document.querySelectorAll('.slide');
+    const navDotsContainer = document.getElementById('navDots');
+    const slideCounter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+    let currentSlide = 0;
+
+    function initNavDots() {
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('nav-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dot.setAttribute('aria-label', `Slide ${index + 1}`);
+            navDotsContainer.appendChild(dot);
+        });
+    }
+
+    function updateUI() {
+        const totalSlides = slides.length;
+        slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+        document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= slides.length || index === currentSlide) return;
+        const direction = index > currentSlide ? 1 : -1;
+        slides[currentSlide].classList.remove('active');
+        slides[currentSlide].classList.add('exit-left');
+        
+        setTimeout(() => {
+            slides[currentSlide - direction].classList.remove('exit-left');
+        }, 500);
+
+        currentSlide = index;
+        slides[currentSlide].style.transform = `translateX(${direction * 60}px)`;
+        void slides[currentSlide].offsetWidth; // Trigger reflow
+        slides[currentSlide].classList.add('active');
+        slides[currentSlide].style.transform = '';
+        updateUI();
+        
+        // Trigger simulations if needed
+        if (currentSlide === 3) updateMomentumSim();
+        if (currentSlide === 5) updateImpulseSim();
+	if (currentSlide === 9) updateInelasticSim();
+
+    }
+
+    function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => touchStartX = e.changedTouches[0].screenX);
+    document.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) { if (diff > 0) nextSlide(); else prevSlide(); }
+    });
+
+    // --- INTERACTIVE ELEMENTS ---
+    function toggleDiscussion(btn) {
+    	const wrapper = btn.closest('.prompt-wrapper');
+    	const box = wrapper.querySelector('.discussion-box');
+    	box.classList.toggle('show');
+    	wrapper.classList.toggle('active');
+    
+   	if (box.classList.contains('show')) { 
+        	btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Sembunyikan'; 
+        
+        	// FIX KATEX: Paksa KaTeX untuk merender rumus di dalam kotak yang baru dibuka
+        	if (typeof renderMathInElement === 'function') {
+            		renderMathInElement(box, {
+                		delimiters: [
+                    			{left: '$$', right: '$$', display: true},
+                    			{left: '$', right: '$', display: false}
+                		]
+            		});
+        	}
+    	} else { 
+        	btn.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan'; 
+    	}
+    }
+
+    // --- FITUR ZOOM GAMBAR ---
+    function openZoom(imgElement) {
+        let modal = document.getElementById('zoomModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'zoomModal';
+            modal.className = 'zoom-modal';
+            modal.onclick = function() { this.classList.remove('active'); };
+            document.body.appendChild(modal);
+        }
+        modal.innerHTML = '<img src="' + imgElement.src + '" alt="Zoomed Image">';
+        modal.classList.add('active');
+    }
+
+    // --- SIMULASI INTERAKTIF 1: VEKTOR MOMENTUM ---
+    let momentumDirection = 1; 
+
+    function setDirection(dir) {
+        momentumDirection = dir;
+        document.getElementById('btnRight').classList.toggle('active', dir === 1);
+        document.getElementById('btnLeft').classList.toggle('active', dir === -1);
+        updateMomentumSim();
+    }
+
+    function updateMomentumSim() {
+        const mass = parseFloat(document.getElementById('massSlider').value);
+        const vel = parseFloat(document.getElementById('velSlider').value);
+        
+        document.getElementById('massVal').innerText = mass.toFixed(1) + ' kg';
+        document.getElementById('velVal').innerText = vel.toFixed(1) + ' m/s';
+
+        const p = mass * vel * momentumDirection;
+        document.getElementById('pResultVal').innerText = (p >= 0 ? '+' : '') + p.toFixed(1);
+
+        const canvas = document.getElementById('momentumCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(canvas.width, centerY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const blockW = 30 + (mass * 3);
+        const blockH = 30 + (mass * 3);
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(centerX - blockW/2, centerY - blockH/2, blockW, blockH);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Space Grotesk';
+        ctx.textAlign = 'center';
+        ctx.fillText('m', centerX, centerY + 5);
+
+        if (vel > 0) {
+            const arrowLength = p * 6; 
+            const arrowStartX = centerX + (momentumDirection * (blockW/2 + 5));
+            const arrowEndX = arrowStartX + arrowLength;
+            
+            drawArrow(ctx, arrowStartX, centerY - 20, arrowEndX, centerY - 20, '#dc2626', 4);
+            
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 16px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('p', arrowStartX + (arrowLength/2), centerY - 30);
+        }
+    }
+
+    function drawArrow(ctx, fromX, fromY, toX, toY, color, width) {
+        const headLen = 12;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    // --- SIMULASI INTERAKTIF 2: GRAFIK IMPULS (F vs t) ---
+    function updateImpulseSim() {
+        const deltaTms = parseFloat(document.getElementById('deltaTSlider').value);
+        const deltaT = deltaTms / 1000; // Konversi ke detik
+        
+        document.getElementById('deltaTVal').innerText = deltaT.toFixed(3) + ' s';
+
+        const deltaP = 60; // kg m/s (konstan)
+        const fAvg = deltaP / deltaT;
+        document.getElementById('fResultVal').innerText = Math.round(fAvg);
+
+        const statusEl = document.getElementById('impulseStatus');
+        if (deltaTms <= 20) {
+            statusEl.innerText = "Gaya Sangat Besar (Tembok Keras)";
+            statusEl.style.color = "#dc2626"; 
+        } else if (deltaTms <= 100) {
+            statusEl.innerText = "Gaya Sedang (Lutut Sedikit Dilipat)";
+            statusEl.style.color = "#f97316"; 
+        } else if (deltaTms <= 300) {
+            statusEl.innerText = "Gaya Berkurang (Matras / Lutut Dilipat Penuh)";
+            statusEl.style.color = "#eab308"; 
+        } else {
+            statusEl.innerText = "Gaya Kecil (Mendarat di Trampolin)";
+            statusEl.style.color = "#16a34a"; 
+        }
+
+        const canvas = document.getElementById('impulseCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const originX = 60;
+        const originY = canvas.height - 40;
+        const graphW = canvas.width - 80;
+        const graphH = canvas.height - 80;
+
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX + graphW, originY);
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX, originY - graphH);
+        ctx.stroke();
+
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 13px Space Grotesk, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Waktu (t)', originX + graphW / 2, originY + 30);
+        ctx.save();
+        ctx.translate(originX - 40, originY - graphH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Gaya (F)', 0, 0);
+        ctx.restore();
+
+        const maxFDisplay = 15000; 
+        const maxTDeltaDisplay = 0.5; 
+
+        const rectW = (deltaT / maxTDeltaDisplay) * graphW;
+        const rectH = Math.min((fAvg / maxFDisplay) * graphH, graphH);
+
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.05)';
+        ctx.fillRect(originX, originY - rectH, rectW, rectH);
+
+        ctx.setLineDash([5, 3]);
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(originX, originY - rectH, rectW, rectH);
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px Space Grotesk, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('Favg', originX - 5, originY - rectH + 5);
+
+        const peakH = Math.min(((fAvg * 1.5) / maxFDisplay) * graphH, graphH); 
+        
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.bezierCurveTo(
+            originX + rectW * 0.2, originY - peakH, 
+            originX + rectW * 0.8, originY - peakH, 
+            originX + rectW, originY 
+        );
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        ctx.lineTo(originX, originY);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+        ctx.fill();
+
+        ctx.fillStyle = '#dc2626';
+        ctx.font = 'bold 14px Space Grotesk, sans-serif';
+        ctx.textAlign = 'center';
+        if (rectW > 80) {
+            ctx.fillText('Luas = Impuls (J)', originX + rectW / 2, originY - (rectH/2) - 10);
+        } else {
+            ctx.fillText('J', originX + rectW / 2, originY - 20);
+        }
+    }
+
+// --- SIMULASI INTERAKTIF 3: TUMBUKAN TIDAK LENTING (KERETA API) ---
+function updateInelasticSim() {
+    // Baca nilai slider dalam TON
+    const mA_ton = parseFloat(document.getElementById('massASlider').value);
+    const mB_ton = parseFloat(document.getElementById('massBSlider').value);
+    const vA = parseFloat(document.getElementById('velASlider').value);
+    const vB = 0; // Kereta B diam
+    
+    // Tampilkan di UI
+    document.getElementById('massAVal').innerText = mA_ton + ' ton';
+    document.getElementById('massBVal').innerText = mB_ton + ' ton';
+    document.getElementById('velAVal').innerText = vA + ' m/s';
+
+    // Konversi ke KG untuk perhitungan Fisika (Joule)
+    const mA = mA_ton * 1000;
+    const mB = mB_ton * 1000;
+
+    // Hitung kecepatan akhir (satuan massa menghilangkan, jadi ton/kg tidak masalah di sini)
+    const vPrime = (mA * vA + mB * vB) / (mA + mB);
+    document.getElementById('vPrimeResult').innerText = vPrime.toFixed(1) + ' m/s';
+
+    // Hitung KE hilang (WAJIB pakai Kg agar Joule-nya benar)
+    const Ki = 0.5 * mA * vA * vA;
+    const Kf = 0.5 * (mA + mB) * vPrime * vPrime;
+    const keLost = Ki - Kf;
+    document.getElementById('keLostResult').innerText = (keLost / 1000000).toFixed(2) + ' MJ';
+
+    // Drawing Canvas
+    const canvas = document.getElementById('inelasticCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const originY = canvas.height / 2;
+    
+    // Skala visual panjang kotak berdasarkan TON (karena nilainya sekarang 5-20)
+    const scaleW = 4; 
+    const scaleV = 4;
+
+    const wA = 30 + (mA_ton * scaleW);
+    const wB = 30 + (mB_ton * scaleW);
+    const gap = 20;
+
+    // Posisi X sebelum tumbukan
+    const xA = 50;
+    const xB = xA + wA + gap;
+
+    // Gambar Kereta A (Sebelum)
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(xA, originY - wA/2 - 20, wA, wA); 
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 12px Space Grotesk';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', xA + wA/2, originY - 20);
+
+    // Gambar Kereta B (Sebelum)
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(xB, originY - wB/2 - 20, wB, wB);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('B', xB + wB/2, originY - 20);
+
+    // Panah Kecepatan A sebelum
+    if (vA > 0) {
+        drawArrow(ctx, xA + wA + 5, originY - 20, xA + wA + 5 + (vA * scaleV), originY - 20, '#dc2626', 3);
+        ctx.fillStyle = '#dc2626'; ctx.font = '12px serif'; ctx.textAlign = 'left';
+        ctx.fillText('v_A', xA + wA + 10 + (vA * scaleV)/2, originY - 30);
+    }
+
+    // Posisi X sesudah tumbukan (di bawah)
+    const wTot = 40 + ((mA_ton + mB_ton) * scaleW * 0.6);
+    const xTot = canvas.width / 2 - wTot / 2;
+
+    // Garis pemisah visual
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(20, originY + 10); ctx.lineTo(canvas.width - 20, originY + 10); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#94a3b8'; ctx.font = '11px Space Grotesk'; ctx.textAlign = 'left';
+    ctx.fillText('SEBELUM', 20, originY - wA/2 - 30);
+    ctx.fillText('SESUDAH', 20, originY + 20);
+
+    // Gambar Kereta Gabungan (Sesudah)
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(xTot, originY + 25, wTot, 40);
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px Space Grotesk'; ctx.textAlign = 'center';
+    ctx.fillText('A+B', xTot + wTot/2, originY + 50);
+
+    // Panah Kecepatan Gabungan
+    if (vPrime > 0) {
+        drawArrow(ctx, xTot + wTot + 5, originY + 45, xTot + wTot + 5 + (vPrime * scaleV), originY + 45, '#1e293b', 3);
+        ctx.fillStyle = '#1e293b'; ctx.font = '12px serif'; ctx.textAlign = 'left';
+        ctx.fillText("v'", xTot + wTot + 10 + (vPrime * scaleV)/2, originY + 35);
+    }
+}
+
+
+    // --- INITIALIZATION ---
+    initNavDots();
+    updateUI();
+    updateMomentumSim();
+    updateImpulseSim(); 
+    updateInelasticSim();
+</script>
+
+</body>
+</html>
