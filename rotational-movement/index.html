@@ -136,7 +136,7 @@
     </div>
     <div class="nav-center" id="navDots"></div>
     <button class="nav-btn" onclick="prevSlide()" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
-    <span class="slide-counter" id="slideCounter">1 / 6</span>
+    <span class="slide-counter" id="slideCounter">1 / 16</span>
     <button class="nav-btn" onclick="nextSlide()" aria-label="Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
 </nav>
 <div class="progress-bar" id="progressBar" style="width:16.66%"></div>
@@ -1408,8 +1408,126 @@
     </div>
 </section>
 
-<!-- SLIDE 13: MOMENTUM SUDUT -->
+<!-- SLIDE 13: ENERGI MEKANIK ROTASI -->
 <section class="slide" id="slide13">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Energi Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Energi Mekanik Rotasi</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Pada gerak translasi, Energi Mekanik adalah jumlah Energi Kinetik dan Energi Potensial. Untuk benda yang menggelinding (rotasi + translasi), definisi ini kita perluas dengan memasukkan komponen rotasi.</p>
+                
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-3" style="color:var(--accent);">Energi Mekanik Total ($E$)</h4>
+                    <div class="math-block-teal math-block text-center" style="font-size: 1.3rem; border-left-color: var(--accent);">
+                        $$ E = KE_{total} + PE $$                         $$ E = \left( \frac{1}{2}mv^2 + \frac{1}{2}I\omega^2 \right) + mgh $$                     </div>
+                </div>
+
+                <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-3" style="color:var(--accent2);"><i class="fa-solid fa-scale-balanced mr-2"></i>Hukum Kekekalan Energi Mekanik</h4>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Jika hanya gaya gravitasi yang melakukan usaha (tanpa gaya gesek kinetik atau hambatan udara), energi mekanik total benda yang menggelinding selalu kekal (konstan).</p>
+                    <div class="math-block text-center" style="font-size: 1.2rem;">
+                        $$ E_i = E_f $$                         $$ \frac{1}{2}mv_i^2 + \frac{1}{2}I\omega_i^2 + mgh_i = \frac{1}{2}mv_f^2 + \frac{1}{2}I\omega_f^2 + mgh_f $$                     </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 justify-center">
+                <div class="card p-5" style="background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(249,115,22,0.05)); border: 1px dashed var(--accent);">
+                    <h4 class="font-bold text-lg mb-3 text-center" style="color:var(--accent);">Interpretasi Fisika</h4>
+                    <p class="text-sm mb-4" style="color:var(--fg);">Saat benda menggelinding turun dari bidang miring, apa yang terjadi pada energinya?</p>
+                    <ul class="space-y-3 text-sm" style="color:var(--fg);">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-arrow-down mt-1" style="color:var(--accent2); font-size: 1rem;"></i>
+                            <span><strong>Energi Potensial ($mgh$) Berkurang:</strong> Karena ketinggian $h$ semakin rendah.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-arrow-up mt-1" style="color:var(--accent); font-size: 1rem;"></i>
+                            <span><strong>Energi Kinetik Translasi ($\frac{1}{2}mv^2$) Bertambah:</strong> Benda meluncur semakin cepat.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-arrow-up mt-1" style="color:var(--accent2); font-size: 1rem;"></i>
+                            <span><strong>Energi Kinetik Rotasi ($\frac{1}{2}I\omega^2$) Bertambah:</strong> Benda berputar semakin cepat.</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 p-3 rounded-lg text-sm text-center" style="background: rgba(13,148,136,0.1); color: var(--accent); border-left: 3px solid var(--accent);">
+                        Penurunan $PE$ = Kenaikan $KE_{trans}$ + Kenaikan $KE_{rot}$                     </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Apakah gaya gesekan melakukan usaha saat menggelinding?</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Jawaban</button>
+                    <div class="discussion-box">
+                        <p class="text-sm" style="color:var(--fg);"><strong>Tidak!</strong> Pada gerak menggelinding <em>tanpa selip</em>, titik kontak benda dengan tanah sesaat diam. Karena tidak ada perpindahan relatif pada titik kontak, maka usaha oleh gaya gesekan kinetik adalah nol. Inilah mengapa Hukum Kekekalan Energi Mekanik tetap berlaku! Gaya gesekan statis di sini hanya berperan sebagai "pengikat" rotasi dan translasi, bukan menghilangkan energi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 13 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Silinder di Bidang Miring</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Sebuah silinder padat bermassa $m = 2.0 \text{ kg}$ dan jari-jari $R = 0.10 \text{ m}$ menggelinding tanpa selip dari puncak bidang miring setinggi $h = 1.5 \text{ m}$. Jika silinder mulai dari diam, hitunglah kecepatan linier silinder saat mencapai dasar bidang miring! (Abaikan gesekan udara, $g = 9.8 \text{ m/s}^2$)
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Menentukan Keadaan Awal dan Akhir</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Analisis</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-2"><strong>Keadaan Awal (Puncak):</strong> Benda diam di ketinggian $h$.</p>
+                    <ul class="list-disc pl-5 text-sm mb-3" style="color:var(--muted);">
+                        <li>$v_i = 0 \implies KE_{trans,i} = 0$</li>
+                        <li>$\omega_i = 0 \implies KE_{rot,i} = 0$</li>
+                        <li>Energi Potensial $PE_i = mgh$</li>
+                    </ul>
+                    <p class="text-sm mb-2"><strong>Keadaan Akhir (Dasar):</strong> Benda bergerak di ketinggian nol.</p>
+                    <ul class="list-disc pl-5 text-sm mb-3" style="color:var(--muted);">
+                        <li>$h_f = 0 \implies PE_f = 0$</li>
+                        <li>$KE_{trans,f} = \frac{1}{2}mv_f^2$</li>
+                        <li>$KE_{rot,f} = \frac{1}{2}I\omega_f^2$</li>
+                    </ul>
+                    <p class="text-xs mt-2" style="color:var(--accent2);">Karena $E_i = E_f$, maka $mgh = \frac{1}{2}mv_f^2 + \frac{1}{2}I\omega_f^2$ (Inilah persis persamaan yang kita pakai untuk pembuktian di slide sebelumnya!)</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Substitusi Momen Inersia dan Variabel $\omega$</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-2">Untuk silinder padat, $I = \frac{1}{2}mR^2$. Dan karena menggelinding tanpa selip, $\omega = \frac{v}{R}$.</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ mgh = \frac{1}{2}mv_f^2 + \frac{1}{2}\left(\frac{1}{2}mR^2\right)\left(\frac{v_f}{R}\right)^2 $$                     </div>
+                    <p class="text-sm mt-2 mb-1" style="color:var(--muted);">Sederhanakan suku rotasi (coret $R^2$):</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ mgh = \frac{1}{2}mv_f^2 + \frac{1}{4}mv_f^2 $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Menghitung Kecepatan Akhir ($v_f$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Hasilnya</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-1">Jumlahkan suku-suku $v_f^2$ dan coret massa $m$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ gh = \left(\frac{1}{2} + \frac{1}{4}\right)v_f^2 = \frac{3}{4}v_f^2 $$                     </div>
+                    <p class="text-sm mt-2 mb-1">Isolasi $v_f^2$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ v_f^2 = \frac{4}{3}gh \implies v_f = \sqrt{\frac{4}{3}gh} $$                     </div>
+                    <p class="text-sm mt-2 mb-1">Masukkan angkanya:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ v_f = \sqrt{\frac{4}{3}(9.8 \text{ m/s}^2)(1.5 \text{ m})} $$                         $$ v_f = \sqrt{19.6} \approx \mathbf{4.43 \text{ m/s}} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Perbandingan:</strong> Jika silinder ini meluncur tanpa bergeser (translasi murni, $I=0$), kecepatannya adalah $v = \sqrt{2gh} \approx 5.42 \text{ m/s}$. Karena sebagian energi harus "membayar" rotasi, kecepatan menggelindingnya lebih lambat!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 14: MOMENTUM SUDUT -->
+<section class="slide" id="slide14">
     <div class="max-w-5xl mx-auto py-4">
         <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Momentum Rotasi</span>
         <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Momentum Sudut & Kekekalan</h2>
@@ -1473,7 +1591,7 @@
             </div>
         </div>
 
-        <!-- LATIHAN SOAL SLIDE 13 -->
+        <!-- LATIHAN SOAL SLIDE 14 -->
         <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
             <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Skater Melipat Tangan</h4>
             <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
@@ -1506,8 +1624,8 @@
     </div>
 </section>
 
-<!-- SLIDE 14: RANGKUMAN VISUAL -->
-<section class="slide" id="slide14">
+<!-- SLIDE 15: RANGKUMAN VISUAL -->
+<section class="slide" id="slide15">
     <div class="max-w-5xl mx-auto py-4">
         <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Rangkuman</span>
         <h2 class="text-4xl md:text-5xl font-black mt-3 mb-8 anim-up-d1">Peta Konsep: Gerak Rotasi</h2>
@@ -1576,8 +1694,8 @@
     </div>
 </section>
 
-<!-- SLIDE 15: PENUTUPAN -->
-<section class="slide" id="slide15">
+<!-- SLIDE 16: PENUTUPAN -->
+<section class="slide" id="slide16">
     <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
         <div class="flex items-center gap-6 mb-8 anim-up">
             <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:250px;width:250px;object-fit:contain;border-radius:8px;">
