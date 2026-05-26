@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerak Rotasi - Fisika Dasar</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '$', right: '$', display: false}]});"></script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --fg: #1e293b;
+            --muted: #64748b;
+            --accent: #0d9488; /* Teal-600 */
+            --accent2: #f97316; /* Orange-500 */
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --nav-h: 80px;
+            --glass: rgba(255,255,255,0.85);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(--fg); overflow:hidden; height:100vh; width:100vw; font-size: 17px; }
+        h1,h2,h3 { font-family:'Playfair Display',serif; }
+
+        .top-nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); background:var(--glass); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); z-index:200; display:flex; align-items:center; padding:0 1.5rem; gap:1rem; }
+        .top-nav .logo-area { display:flex; align-items:center; gap:1rem; flex-shrink:0; }
+        .top-nav .logo-area img { height:55px; width:auto; object-fit:contain; border-radius:4px; }
+        .top-nav .logo-area span { font-weight:800; font-size:1.1rem; color:var(--accent); white-space:nowrap; }
+        .nav-center { flex:1; display:flex; justify-content:center; align-items:center; gap:0.35rem; overflow-x:auto; }
+        .nav-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; border:none; cursor:pointer; transition:all 0.3s; flex-shrink:0; }
+        .nav-dot.active { background:var(--accent); width:24px; border-radius:4px; box-shadow:0 0 8px rgba(13,148,136,0.4); }
+        .nav-dot:hover { background:var(--accent); }
+        .nav-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:0.75rem; flex-shrink:0; }
+        .nav-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+        .slide-counter { font-size:0.75rem; color:var(--muted); font-weight:600; white-space:nowrap; flex-shrink:0; }
+
+        .progress-bar { position:fixed; top:var(--nav-h); left:0; height:3px; z-index:201; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+        .slide-area { position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; overflow:hidden; }
+        .slide { position:absolute; top:0; left:0; width:100%; height:100%; overflow-y:auto; overflow-x:hidden; opacity:0; transform:translateX(60px); transition:opacity 0.5s ease,transform 0.5s ease; pointer-events:none; padding:2rem 2.5rem 3rem; }
+        .slide.active { opacity:1; transform:translateX(0); pointer-events:auto; }
+        .slide.exit-left { opacity:0; transform:translateX(-60px); }
+
+        .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); transition:all 0.3s; }
+        .card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); transform:translateY(-2px); }
+
+        .formula-box { display:inline-block; font-size:2.1rem; font-weight:700; padding:1rem 2rem; background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(249,115,22,0.05)); border:1px solid rgba(13,148,136,0.2); border-radius:0.75rem; }
+
+        .math-block { background:#f1f5f9; border-left:4px solid var(--accent2); padding:1rem 1.5rem; border-radius:0 0.5rem 0.5rem 0; margin:0.75rem 0; overflow-x:auto; font-size:1.2rem; }
+        .math-block-teal { border-left-color: var(--accent); }
+
+        .badge { display:inline-block; padding:0.35rem 0.9rem; border-radius:9999px; font-size:0.8rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; }
+
+        .profile-img { width:220px; height:220px; border-radius:1rem; object-fit:cover; object-position: top center; border:3px solid var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-anim { animation:float 4s ease-in-out infinite; }
+
+        @keyframes spin-slow { from {transform: rotate(0deg)} to {transform: rotate(360deg)} }
+        .spin-anim { animation: spin-slow 6s linear infinite; display: inline-block; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .slide.active .anim-up { animation:fadeUp 0.6s ease forwards; }
+        .slide.active .anim-up-d1 { animation:fadeUp 0.6s 0.1s ease forwards; opacity:0; }
+        .slide.active .anim-up-d2 { animation:fadeUp 0.6s 0.2s ease forwards; opacity:0; }
+        .slide.active .anim-up-d3 { animation:fadeUp 0.6s 0.3s ease forwards; opacity:0; }
+        .slide.active .anim-up-d4 { animation:fadeUp 0.6s 0.4s ease forwards; opacity:0; }
+
+        .slide::-webkit-scrollbar { width:4px; }
+        .slide::-webkit-scrollbar-track { background:transparent; }
+        .slide::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:2px; }
+
+        /* Interactive Prompt System */
+        .prompt-wrapper { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1rem; background: #fff; transition: all 0.3s; }
+        .prompt-wrapper.active { border-color: var(--accent); background: linear-gradient(135deg, rgba(13,148,136,0.02), rgba(249,115,22,0.02)); }
+        .prompt-header { display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+        .prompt-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9rem; }
+        .prompt-wrapper.active .prompt-icon { background: var(--accent2); }
+        .reveal-btn { background: transparent; border: 1px dashed var(--muted); color: var(--muted); padding: 0.3rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-top: 0.75rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .reveal-btn:hover { border-style: solid; border-color: var(--accent); color: var(--accent); }
+        .prompt-wrapper.active .reveal-btn { border-color: var(--accent2); color: var(--accent2); background: rgba(249,115,22,0.05); }
+        .discussion-box { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease; margin-top: 0; background: #f8fafc; border-left: 3px solid var(--accent); border-radius: 0 0.5rem 0.5rem 0; padding: 0 1rem; font-size: 0.95rem; line-height: 1.6; }
+        .discussion-box.show { max-height: 1500px; opacity: 1; margin-top: 1rem; padding: 1rem; }
+
+        /* Poll Options for Slide 2 */
+        .poll-option { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; }
+        .poll-option:hover { border-color: var(--accent); background: rgba(13,148,136,0.03); }
+        .poll-option.selected { border-color: var(--accent); background: rgba(13,148,136,0.05); }
+        .poll-option.correct { border-color: #16a34a; background: rgba(22, 163, 74,0.08); color: #16a34a; font-weight: 600;}
+        .poll-option.wrong { border-color: var(--accent2); background: rgba(249,115,22,0.08); color: var(--accent2); }
+        .poll-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #cbd5e1; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .poll-option.selected .poll-radio { border-color: var(--accent); }
+        .poll-option.selected .poll-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+        .poll-option.correct .poll-radio { border-color: #16a34a; }
+        .poll-option.correct .poll-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #16a34a; }
+
+        /* Slider custom for canvas */
+        input[type=range] { width: 100%; height: 6px; border-radius: 3px; background: #e2e8f0; outline: none; -webkit-appearance: none; appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        @media(max-width:768px) { .slide{padding:1.25rem 1rem 2rem} .formula-box{font-size:1.5rem;padding:0.75rem 1.25rem} .profile-img{width:140px;height:140px} .top-nav .logo-area span{display:none} }
+        @media(prefers-reduced-motion:reduce) { .slide{transition:opacity 0.2s;transform:none!important} .slide.active{transform:none!important} .float-anim{animation:none} .spin-anim{animation:none} }
+          
+        @media print {
+            .top-nav, .progress-bar { display: none !important; }
+            body { overflow: visible !important; height: auto !important; width: 100% !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
+            .slide-area { position: static !important; overflow: visible !important; height: auto !important; width: 100% !important; }
+            .slide { position: relative !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; width: 100% !important; height: auto !important; min-height: 90vh !important; page-break-after: always; page-break-inside: avoid; margin: 0 auto !important; padding: 2rem 3rem !important; box-sizing: border-box !important; box-shadow: none !important; border: none !important; overflow: visible !important; background-color: white !important; }
+            .slide.exit-left { opacity: 1 !important; transform: none !important; }
+            .anim-up, .anim-up-d1, .anim-up-d2, .anim-up-d3, .anim-up-d4 { opacity: 1 !important; animation: none !important; transform: none !important; }
+            .float-anim, .spin-anim { animation: none !important; }
+            .card { box-shadow: none !important; break-inside: avoid; }
+            .discussion-box { max-height: none !important; opacity: 1 !important; margin-top: 1rem !important; padding: 1rem !important; }
+            .reveal-btn { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Navigasi slide">
+    <div class="logo-area">
+        <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI">
+        <span>Politeknik ATMI Surakarta</span>
+    </div>
+    <div class="nav-center" id="navDots"></div>
+    <button class="nav-btn" onclick="prevSlide()" aria-label="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="slide-counter" id="slideCounter">1 / 6</span>
+    <button class="nav-btn" onclick="nextSlide()" aria-label="Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
+</nav>
+<div class="progress-bar" id="progressBar" style="width:16.66%"></div>
+
+<div class="slide-area">
+
+<!-- SLIDE 0: COVER -->
+<section class="slide active" id="slide0">
+    <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
+        <div class="flex items-center gap-6 mb-6 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:320px;width:320px;object-fit:contain;border-radius:8px;">
+            <div>
+                <div class="text-xl font-bold" style="color:var(--accent);">Politeknik ATMI Surakarta</div>
+                <div class="text-base" style="color:var(--muted);">Teknik Mesin Industri</div>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-center mb-4 anim-up-d1" style="color:var(--fg);">Gerak Rotasi</h1>
+        <p class="text-xl md:text-2xl text-center max-w-2xl mb-6 anim-up-d2" style="color:var(--muted);line-height:1.7;">Memahami kinematika dan dinamika benda berputar, dari roda sepeda hingga tata surya.</p>
+        
+        <div class="card p-6 mb-8 max-w-3xl w-full anim-up-d3" style="border-left:4px solid var(--accent); background:linear-gradient(135deg,rgba(13,148,136,0.04),rgba(249,115,22,0.04));">
+            <div class="text-left">
+                <h3 class="text-xl font-bold mb-4" style="color:var(--accent);">Learning Outcomes</h3>
+                <p class="text-base mb-4 font-medium" style="color:var(--fg);">Setelah mempelajari bab ini, mahasiswa diharapkan mampu:</p>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-gear mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Mendefinisikan besaran sudut (posisi, kecepatan, dan percepatan sudut)</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-gear mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menerapkan kinematika rotasi untuk percepatan sudut konstan</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-gear mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menjelaskan konsep torsi dan momen inersia (Hukum Newton II Rotasi)</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-gear mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menghitung energi kinetik rotasi dan menerapkannya pada benda menggelinding</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-gear mt-1" style="color:var(--accent2); font-size:1.1rem;"></i><span class="text-base" style="color:var(--muted);">Menerapkan konsep momentum sudut dan hukum kekekalan momentum sudut</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6 mb-8 anim-up-d4">
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0s;"><div class="text-3xl font-black spin-anim" style="color:var(--accent);">ω</div><div class="text-sm mt-1" style="color:var(--muted);">Kecepatan Sudut</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.4s;"><div class="text-3xl font-black" style="color:var(--accent2);">τ</div><div class="text-sm mt-1" style="color:var(--muted);">Torsi</div></div>
+            <div class="card px-6 py-4 text-center float-anim" style="animation-delay:0.8s;"><div class="text-3xl font-black" style="color:var(--accent);">I</div><div class="text-sm mt-1" style="color:var(--muted);">Momen Inersia</div></div>
+        </div>
+        
+        <div class="card p-5 flex items-center gap-5 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Foto Dosen" class="w-36 h-36 rounded-lg object-cover" style="border:2px solid var(--border); object-position: top center;">
+            <div><div class="font-bold text-lg">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div><div class="text-base" style="color:var(--muted);">Fisika Dasar &mdash; Semester 2, 2 SKS</div></div>
+        </div>
+        <p class="mt-8 text-sm" style="color:var(--muted);"><i class="fa-solid fa-arrow-right mr-1"></i> Tekan panah kanan atau swipe untuk melanjutkan</p>
+    </div>
+</section>
+
+<!-- SLIDE 1: PROFIL DOSEN -->
+<section class="slide" id="slide1">
+    <div class="max-w-4xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Profil Dosen</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-6 anim-up-d1">Dosen Pengampu</h2>
+        <div class="card p-6 md:p-8 anim-up-d2">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <img src="https://z-cdn-media.chatglm.cn/files/17e4f034-e692-43bd-919c-761c5693e5d8.png?auth_key=1878645890-4a3d1232d4cf4bad877ad6c6d71c9a9a-0-674b2c289711695a0e4fcf2a95af217a" alt="Ir. Fidelis Gigih Triatmaja" class="profile-img">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold mb-2">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</h3>
+                    <p class="text-base mb-5" style="color:var(--muted);">Dosen Fisika Dasar &mdash; Politeknik ATMI Surakarta</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-envelope w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>fidelis.gigih@atmi.ac.id</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-phone w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>0812 7161 2910</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-building w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>Kantor: Lab WAP &ndash; TMI</span></div>
+                        <div class="flex items-center gap-3 text-base"><i class="fa-solid fa-clock w-5 text-center" style="color:var(--accent2);font-size:1.1rem;"></i><span>08.00 &ndash; 17.00 WIB</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card p-6 mt-4 anim-up-d3">
+            <div class="flex items-center gap-3 mb-4"><i class="fa-solid fa-calendar-days text-xl" style="color:var(--accent2);"></i><span class="font-semibold text-lg">Jadwal Kuliah</span></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Hari</div><div style="color:var(--muted);">Kamis &amp; Jumat</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Waktu</div><div style="color:var(--muted);">08.30 &ndash; 11.20 WIB</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">Kode MK</div><div style="color:var(--muted);">FISIKA DASAR-IPPD 1.1.5</div></div>
+                <div class="p-4 rounded-lg" style="background:#f8fafc;"><div class="font-semibold text-lg">SKS</div><div style="color:var(--muted);">Semester 2 &ndash; 2 SKS</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 2: PEMBUKA - BOLA VS SILINDER -->
+<section class="slide" id="slide2">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Pembuka</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Mana yang Lebih Dulu Sampai?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent2);"><i class="fa-solid fa-circle-question mr-2"></i>Chapter-Opening Question</h4>
+                    <p class="text-base" style="color:var(--fg); line-height: 1.7;">
+                        Sebuah <strong>bola padat</strong> (solid ball) dan sebuah <strong>silinder padat</strong> (solid cylinder) melewati sebuah bidang miring. Keduanya mulai diam dari tempat dan waktu yang sama. <strong>Mana yang sampai di bawah lebih dulu?</strong>
+                    </p>
+                </div>
+
+                <div class="mb-4" id="pollContainer">
+                    <div class="poll-option" onclick="selectPoll(this, 'a')">
+                        <div class="poll-radio"></div>
+                        <span>(a) Mereka sampai pada waktu yang sama</span>
+                    </div>
+                    <div class="poll-option" onclick="selectPoll(this, 'b')">
+                        <div class="poll-radio"></div>
+                        <span>(b) Hampir bersamaan, tergantung gesekan</span>
+                    </div>
+                    <div class="poll-option" onclick="selectPoll(this, 'c')">
+                        <div class="poll-radio"></div>
+                        <span>(c) Bola padat sampai lebih dulu</span>
+                    </div>
+                    <div class="poll-option" onclick="selectPoll(this, 'd')">
+                        <div class="poll-radio"></div>
+                        <span>(d) Silinder padat sampai lebih dulu</span>
+                    </div>
+                    <div class="poll-option" onclick="selectPoll(this, 'e')">
+                        <div class="poll-radio"></div>
+                        <span>(e) Tidak bisa ditentukan tanpa tahu massa dan jari-jari</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-center">
+                <img src="gambar/gambar-1.png" alt="Bola dan Silinder di Bidang Miring" class="w-full h-auto object-contain rounded-lg mb-3" style="max-height: 280px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                <span class="text-xs font-semibold" style="color:var(--muted);">Ilustrasi: Bola padat vs Silinder padat menggelinding</span>
+            </div>
+        </div>
+
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <div class="prompt-wrapper" id="answerPrompt">
+                <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-lg font-medium">Ingin tahu jawaban dan alasannya?</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <div class="mb-4 p-3 rounded-lg text-base" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Jawaban: (c) Bola padat sampai lebih dulu!</strong>
+                    </div>
+                    
+                    <p class="mb-3 text-base" style="color:var(--fg);">Mengapa? Kunci jawabannya ada pada <strong>momen inersia</strong> (kecenderungan benda untuk mempertahankan keadaan rotasinya).</p>
+                    
+                    <p class="text-sm font-semibold mt-3 mb-1" style="color:var(--accent);">Alasan Fisika:</p>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Saat menggelinding, energi potensial gravitasi diubah menjadi energi kinetik translasi <strong>dan</strong> energi kinetik rotasi. Benda yang membutuhkan energi rotasi lebih sedikit akan memiliki energi translasi lebih besar (berarti lebih cepat).</p>
+                    
+                    <p class="text-sm font-semibold mt-3 mb-1" style="color:var(--accent);">Perbandingan Momen Inersia:</p>
+                    <ul class="space-y-2 text-sm mb-3" style="color:var(--fg);">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle mt-1" style="color:var(--accent2); font-size: 0.5rem; margin-top:0.4rem;"></i>
+                            <span><strong>Silinder padat:</strong> $I = \frac{1}{2}MR^2$ (lebih banyak massa terkonsentrasi jauh dari poros)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle mt-1" style="color:var(--accent); font-size: 0.5rem; margin-top:0.4rem;"></i>
+                            <span><strong>Bola padat:</strong> $I = \frac{2}{5}MR^2$ (massa lebih terkonsentrasi di dekat poros)</span>
+                        </li>
+                    </ul>
+
+                    <div class="p-3 rounded-lg text-sm" style="background: rgba(13,148,136,0.1); color: var(--accent); border-left: 3px solid var(--accent);">
+                        <i class="fa-solid fa-star mr-1"></i> <strong>Kesimpulan:</strong> Karena $\frac{2}{5} < \frac{1}{2}$, bola padat memiliki momen inersia lebih kecil. Ia lebih "enggan" berputar, sehingga lebih banyak energi yang dikonversi menjadi gerak translasi (bergerak lurus ke bawah). Akibatnya, bola padat menggelinding lebih cepat! Massa dan jari-jari ternyata tidak berpengaruh pada urutan kedatangan ini.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: BESARAN SUDUT -->
+<section class="slide" id="slide3">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Konsep Dasar</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Besaran Sudut (Angular Quantities)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Setiap titik pada benda yang berputar bergerak dalam lingkaran. Posisi sudut benda ditentukan oleh sudut $\theta$ terhadap garis referensi (sumbu-x). Satuan yang paling mudah untuk perhitungan fisika adalah <strong>radian (rad)</strong>.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.4rem;">
+                    $$ \theta = \frac{l}{r} \quad \implies \quad l = r\theta $$                 </div>
+                <p class="text-base mt-4" style="color:var(--muted);">Di mana:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-2 text-base" style="color:var(--fg);">
+                    <li><strong>$l$</strong> = Panjang busur (arc length)</li>
+                    <li><strong>$r$</strong> = Jari-jari lingkaran</li>
+                    <li><strong>$\theta$</strong> = Sudut dalam <em>radian</em></li>
+                </ul>
+                
+                <div class="card p-5 mt-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-exchange-alt mr-2" style="color:var(--accent2);"></i>Konversi Satuan Sudut</h4>
+                    <p class="text-sm mb-2" style="color:var(--muted);">Satu putaran penuh = Keliling lingkaran / jari-jari:</p>
+                    <div class="math-block-teal math-block text-center" style="font-size: 1.1rem; margin-top: 0.5rem;">
+                        $$ 1 \text{ rev} = 360^\circ = 2\pi \text{ rad} \approx 6.28 \text{ rad} $$                         $$ 1 \text{ rad} \approx 57.3^\circ $$                     </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <div class="card overflow-hidden">
+                    <img src="gambar/gambar-2a.png" alt="Roda Berputar dengan Titik P" class="w-full h-auto object-contain p-3" style="max-height: 200px;">
+                    <div class="p-3 text-center" style="background: #f8fafc; border-top: 1px solid var(--border);">
+                        <span class="font-bold text-sm" style="color:var(--accent);">Ilustrasi Posisi Sudut</span>
+                        <p class="text-xs mt-1" style="color:var(--muted);">Titik P bergerak sepanjang busur $l$ saat roda berputar sejauh $\theta$.</p>
+                    </div>
+                </div>
+                <div class="card overflow-hidden">
+                    <img src="gambar/gambar-2b.png" alt="Definisi Radian" class="w-full h-auto object-contain p-3" style="max-height: 200px;">
+                    <div class="p-3 text-center" style="background: #f8fafc; border-top: 1px solid var(--border);">
+                        <span class="font-bold text-sm" style="color:var(--accent);">Definisi 1 Radian</span>
+                        <p class="text-xs mt-1" style="color:var(--muted);">Jika panjang busur $l$ sama dengan jari-jari $r$, maka sudut yang terbentuk adalah 1 radian.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="prompt-wrapper anim-up-d3">
+            <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-lg font-medium">Mengapa harus menggunakan Radian, bukan Derajat?</div></div>
+            <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Alasannya</button>
+            <div class="discussion-box">
+                <p class="mb-2">Persamaan $l = r\theta$ <strong>hanya berlaku jika $\theta$ dalam satuan radian</strong>. Mengapa?</p>
+                <p class="text-sm mb-2" style="color:var(--muted);">Karena radian adalah rasio antara dua panjang (busur dan jari-jari), maka radian adalah besaran <strong>tanpa dimensi</strong> (dimensionless). Jika Anda memasukkan derajat ke dalam rumus $l = r\theta$, hasilnya akan salah total secara fisika!</p>
+                <div class="p-3 rounded-lg text-sm mt-2" style="background: rgba(249,115,22,0.1); color: var(--accent2); border-left: 3px solid var(--accent2);">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> <strong>Peringatan:</strong> Dalam semua perhitungan rotasi, selalu pastikan sudut $\theta$ dalam radian. Jika soal memberikan derajat, konversilah terlebih dahulu ke radian.
+                </div>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 3 (LAYOUT DIUBAH UNTUK GAMBAR VERTIKAL) -->
+        <div class="card p-6 mt-6 anim-up-d4" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Penglihatan Elang</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+                <!-- Kolom Kiri: Teks Soal & Pembahasan -->
+                <div class="md:col-span-3">
+                    <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                        Mata elang mampu membedakan objek yang memiliki sudut pandang tidak kurang dari sekitar $3 \times 10^{-4}$ rad. 
+                        <strong>(a)</strong> Berapa derajatkah sudut yang sangat kecil ini? 
+                        <strong>(b)</strong> Seberapa kecil objek (panjang chord/busur) yang bisa dibedakan elang saat terbang pada ketinggian 100 m?
+                    </p>
+
+                    <div class="prompt-wrapper">
+                        <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Bagian (a): Konversi Radian ke Derajat</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                        <div class="discussion-box">
+                            <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\theta = 3 \times 10^{-4}$ rad</p>
+                            <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\theta$ dalam derajat?</p>
+                            <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                            <p class="text-sm mb-1" style="color:var(--muted);">Kita gunakan faktor konversi yang sudah kita pelajari, di mana $360^\circ = 2\pi$ rad:</p>
+                            <div class="math-block-teal math-block" style="font-size: 1rem;">
+                                $$ \theta = (3 \times 10^{-4} \text{ rad}) \times \frac{360^\circ}{2\pi \text{ rad}} $$                                 $$ \theta \approx 0.017^\circ $$                             </div>
+                            <p class="text-xs mt-2" style="color:var(--muted);">Sudut ini sangat kecil, hampir tidak terdeteksi oleh mata manusia!</p>
+                        </div>
+                    </div>
+
+                    <div class="prompt-wrapper">
+                        <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Bagian (b): Menghitung Ukuran Objek</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                        <div class="discussion-box">
+                            <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\theta = 3 \times 10^{-4}$ rad, $r = 100$ m</p>
+                            <p class="mb-2 text-sm"><strong>Ditanya:</strong> Panjang objek ($l$)?</p>
+                            <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                            <p class="text-sm mb-1" style="color:var(--muted);">Karena sudutnya sangat kecil, panjang busur $l$ dan panjang tali busur (chord) hampir sama. Kita gunakan persamaan $l = r\theta$ (pastikan $\theta$ dalam radian!):</p>
+                            <div class="math-block" style="font-size: 1rem;">
+                                $$ l = r\theta = (100 \text{ m})(3 \times 10^{-4} \text{ rad}) $$                                 $$ l = 3 \times 10^{-2} \text{ m} = \mathbf{3 \text{ cm}} $$                             </div>
+                            <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                                <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kesimpulan:</strong> Dari ketinggian 100 m, elang dapat melihat objek sekecil 3 cm (kira-kira seukuran tikus kecil!). Penglihatan yang luar biasa tajam.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Gambar Vertikal -->
+                <div class="md:col-span-2 flex flex-col items-center justify-center">
+                    <img src="gambar/gambar-4.png" alt="Ilustrasi Penglihatan Elang" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 400px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                    <span class="text-xs font-semibold text-center" style="color:var(--muted);">Ilustrasi sudut pandang elang terhadap objek di tanah</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: KECEPATAN & PERCEPATAN SUDUT -->
+<section class="slide" id="slide4">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Kinematika Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Kecepatan & Percepatan Sudut</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div class="card p-5" style="border-top: 4px solid var(--accent);">
+                <h4 class="font-bold text-xl mb-3" style="color:var(--accent);">Kecepatan Sudut ($\omega$)</h4>
+                <p class="text-base mb-3" style="color:var(--muted);">Laju perubahan posisi sudut terhadap waktu. Semua titik pada benda tegar yang berputar memiliki <strong>kecepatan sudut yang sama</strong>.</p>
+                <div class="math-block-teal math-block text-center" style="font-size: 1.2rem;">
+                    $$ \omega = \frac{\Delta\theta}{\Delta t} \quad (\text{rad/s}) $$                 </div>
+                <div class="mt-3 text-sm" style="color:var(--fg);">
+                    <strong>Konvensi Tanda:</strong><br>
+                    <span style="color: var(--accent);">+ (positif)</span> = Berlawanan jarum jam (CCW)<br>
+                    <span style="color: var(--accent2);">- (negatif)</span> = Searah jarum jam (CW)
+                </div>
+            </div>
+            
+            <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                <h4 class="font-bold text-xl mb-3" style="color:var(--accent2);">Percepatan Sudut ($\alpha$)</h4>
+                <p class="text-base mb-3" style="color:var(--muted);">Laju perubahan kecepatan sudut terhadap waktu. Menunjukkan seberapa cepat benda semakin cepat atau lambat berputar.</p>
+                <div class="math-block text-center" style="font-size: 1.2rem;">
+                    $$ \alpha = \frac{\Delta\omega}{\Delta t} \quad (\text{rad/s}^2) $$                 </div>
+                <div class="mt-3 text-sm" style="color:var(--fg);">
+                    <strong>Jika $\alpha = 0$:</strong> Benda berputar dengan kecepatan sudut konstan (Gerak Melingkar Beraturan).
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-6 mb-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-sync-alt"></i> Frekuensi dan Perioda</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div>
+                    <p class="text-base mb-3" style="color:var(--fg);">Frekuensi ($f$) adalah jumlah putaran per sekon, dan Perioda ($T$) adalah waktu yang dibutuhkan untuk satu putaran penuh.</p>
+                    <div class="math-block-teal math-block text-center" style="font-size: 1.1rem;">
+                        $$ \omega = 2\pi f \quad \text{dan} \quad T = \frac{1}{f} $$                     </div>
+                    <p class="text-sm mt-3" style="color:var(--muted);">Satuan frekuensi: Hertz (Hz) atau s<sup>-1</sup></p>
+                </div>
+                <div class="p-4 rounded-lg text-center" style="background: rgba(13,148,136,0.05); border: 1px dashed var(--accent);">
+                    <div class="text-sm font-semibold mb-2" style="color:var(--muted);">Contoh Cepat:</div>
+                    <p class="text-base" style="color:var(--fg);">Sebuah roda berputar dengan frekuensi $f = 2 \text{ Hz}$ (2 putaran per sekon).</p>
+                    <p class="text-base mt-2" style="color:var(--fg);">Maka kecepatan sudutnya:</p>
+                    <div class="text-xl font-bold mt-2" style="color:var(--accent);">$\omega = 2\pi(2) = 4\pi \approx 12.57 \text{ rad/s}$</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 mb-6 anim-up-d4" style="border-left: 4px solid var(--accent2);">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-lightbulb text-2xl" style="color:var(--accent2);"></i>
+                <div>
+                    <h4 class="font-bold text-lg mb-2">Poin Penting: Rotasi vs Translasi</h4>
+                    <p class="text-base" style="color:var(--muted);">Dalam gerak translasi, setiap titik pada benda tegar memiliki kecepatan linier $v$ yang sama. Namun dalam gerak rotasi, setiap titik pada benda tegar memiliki kecepatan sudut $\omega$ yang sama, tetapi kecepatan linier $v$-nya <strong>berbeda-beda</strong> tergantung jaraknya dari poros!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 4 -->
+        <div class="card p-6 anim-up" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Hard Disk Drive (HDD)</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Piringan komputer (hard disk) berputar dengan kecepatan 7200 rpm (revolutions per minute). 
+                <strong>(a)</strong> Berapakah frekuensi putarannya dalam Hz? 
+                <strong>(b)</strong> Berapakah kecepatan sudutnya dalam rad/s? 
+                <strong>(c)</strong> Berapakah perioda untuk satu putaran penuh?
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">a</div><div class="text-lg font-medium">Mencari Frekuensi ($f$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> Kecepatan = 7200 rpm (putaran per menit)</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> Frekuensi $f$ dalam Hz (putaran per sekon)?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Kita perlu mengkonversi satuan waktu dari menit ke sekon. Ingat bahwa 1 menit = 60 sekon.</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ f = \frac{7200 \text{ rev}}{60 \text{ s}} = \mathbf{120 \text{ Hz}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">b</div><div class="text-lg font-medium">Mencari Kecepatan Sudut ($\omega$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $f = 120$ Hz</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\omega$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan hubungan antara kecepatan sudut dan frekuensi:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \omega = 2\pi f = 2\pi (120 \text{ Hz}) $$                         $$ \omega = 240\pi \text{ rad/s} \approx \mathbf{754 \text{ rad/s}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">c</div><div class="text-lg font-medium">Mencari Perioda ($T$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $f = 120$ Hz</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $T$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Perioda adalah kebalikan dari frekuensi:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ T = \frac{1}{f} = \frac{1}{120 \text{ Hz}} $$                         $$ T \approx \mathbf{0.00833 \text{ s}} = \mathbf{8.33 \text{ ms}} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kesimpulan:</strong> Piringan HDD berputar sangat cepat! Melakukan 120 putaran setiap detiknya, dengan waktu satu putaran hanya sekitar 8.33 milidetik.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: HUBUNGAN LINIER & SUDUT + SIMULASI -->
+<section class="slide" id="slide5">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Simulasi Interaktif</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Hubungan Besaran Linier & Sudut</h2>
+        
+        <!-- LAYOUT DIUBAH: 2 kolom menjadi 5 kolom (2:3) agar gambar lebih besar -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6 anim-up-d2">
+            <div class="md:col-span-2">
+                <p class="text-lg mb-4" style="color:var(--muted);">Setiap titik pada benda berputar memiliki kecepatan linier $v$ dan percepatan linier $a$. Bagaimana hubungannya dengan besaran sudut?</p>
+                
+                <div class="space-y-3">
+                    <div class="card p-4" style="border-left: 4px solid var(--accent);">
+                        <span class="font-bold text-base" style="color:var(--accent);">Kecepatan Linier ($v$)</span>
+                        <div class="math-block-teal math-block text-center" style="font-size: 1.1rem; margin-top: 0.5rem; margin-bottom: 0;">$$ v = r\omega $$</div>
+                        <p class="text-xs mt-2" style="color:var(--muted);">Semakin jauh dari poros, kecepatan linier semakin besar.</p>
+                    </div>
+                    
+                    <div class="card p-4" style="border-left: 4px solid var(--accent2);">
+                        <span class="font-bold text-base" style="color:var(--accent2);">Percepatan Tangensial ($a_{\text{tan}}$)</span>
+                        <div class="math-block text-center" style="font-size: 1.1rem; margin-top: 0.5rem; margin-bottom: 0;">$$ a_{\text{tan}} = r\alpha $$</div>
+                        <p class="text-xs mt-2" style="color:var(--muted);">Percepatan searah lintasan (mengubah besarnya kecepatan).</p>
+                    </div>
+                    
+                    <div class="card p-4" style="border-left: 4px solid #16a34a;">
+                        <span class="font-bold text-base" style="color:#16a34a;">Percepatan Sentripetal ($a_R$)</span>
+                        <div class="math-block text-center" style="font-size: 1.1rem; margin-top: 0.5rem; margin-bottom: 0; border-left-color: #16a34a;">$$ a_R = \frac{v^2}{r} = \omega^2 r $$</div>
+                        <p class="text-xs mt-2" style="color:var(--muted);">Percepatan mengarah ke poros (mengubah arah kecepatan).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-3 flex flex-col gap-4">
+                <div class="card overflow-hidden">
+                    <!-- GAMBAR DIPERBESAR dari 180px menjadi 300px -->
+                    <img src="gambar/gambar-3.png" alt="Titik A dan B pada Roda" class="w-full h-auto object-contain p-3" style="max-height: 300px;">
+                    <div class="p-3 text-center" style="background: #f8fafc; border-top: 1px solid var(--border);">
+                        <span class="font-bold text-sm" style="color:var(--accent);">Titik A vs Titik B</span>
+                        <p class="text-xs mt-1" style="color:var(--muted);">Titik B lebih jauh dari poros ($r_B > r_A$), sehingga $v_B > v_A$, namun $\omega_A = \omega_B$.</p>
+                    </div>
+                </div>
+                
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Pertanyaan Konseptual: Singa vs Kuda</div></div>
+                    <p class="text-sm mt-1" style="color:var(--fg);">Pada carousel, anak di kuda tepat di tepi luar dan anak di singa berada di tengah. Siapa yang memiliki $v$ lebih besar? Siapa yang $\omega$-nya lebih besar?</p>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Jawaban</button>
+                    <div class="discussion-box">
+                        <ul class="space-y-2 text-sm" style="color:var(--fg);">
+                            <li><strong>Kecepatan Linier ($v$):</strong> Anak di kuda (tepiluar) lebih besar, karena jari-jarinya lebih besar ($v = r\omega$).</li>
+                            <li><strong>Kecepatan Sudut ($\omega$):</strong> Sama! Carousel berputar sebagai satu kesatuan benda tegar. Semua titik menempati sudut yang sama dalam waktu yang sama.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULASI CANVAS -->
+        <div class="card p-6 mb-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 text-center" style="color:var(--accent);"><i class="fa-solid fa-cog fa-spin mr-2"></i>Simulasi Roda Berputar</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <div class="p-3 rounded-lg text-center" style="background: #f1f5f9; border: 1px solid var(--border);">
+                        <canvas id="wheelCanvas" width="400" height="400" style="max-width: 100%; height: auto;"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-base" style="color:var(--accent);">Kecepatan Sudut ($\omega$)</span>
+                            <span class="font-bold text-lg" style="color:var(--accent);" id="omegaValDisplay">2.0 rad/s</span>
+                        </div>
+                        <input type="range" id="omegaSlider" min="0" max="8" step="0.1" value="2" oninput="updateWheelSim()">
+                    </div>
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-base" style="color:var(--accent2);">Jarak Titik P dari Poros ($r$)</span>
+                            <span class="font-bold text-lg" style="color:var(--accent2);" id="rValDisplay">0.9 m</span>
+                        </div>
+                        <input type="range" id="rSlider" min="0.1" max="1.5" step="0.1" value="0.9" oninput="updateWheelSim()">
+                    </div>
+                    
+                    <div class="p-5 rounded-xl" style="background: var(--bg); border: 2px dashed var(--border);">
+                        <div class="text-sm font-semibold mb-3 text-center" style="color:var(--muted);">Hasil Perhitungan Titik P:</div>
+                        <div class="grid grid-cols-1 gap-3">
+                            <div class="flex justify-between items-center p-2 rounded" style="background: white; border: 1px solid var(--border);">
+                                <span class="font-semibold text-sm">Kecepatan Linier ($v$)</span>
+                                <span class="font-bold text-lg" style="color:var(--accent);" id="vResult">1.80 m/s</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 rounded" style="background: white; border: 1px solid var(--border);">
+                                <span class="font-semibold text-sm">Percepatan Sentripetal ($a_R$)</span>
+                                <span class="font-bold text-lg" style="color:#16a34a;" id="aRResult">3.60 m/s²</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs mt-3 text-center" style="color:var(--muted);"><i class="fa-solid fa-info-circle mr-1"></i> Panjang vektor pada simulasi sebanding dengan nilai perhitungan.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 5 -->
+        <div class="card p-6 anim-up-d4" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Bianglala (Carousel)</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Sebuah bianglala (carousel) awalnya diam, lalu dipercepat secara konstan dengan percepatan sudut $\alpha = 0.060 \text{ rad/s}^2$. Setelah berlangsung selama $t = 8.0$ s, tentukan: 
+                <strong>(a)</strong> Kecepatan sudut bianglala, 
+                <strong>(b)</strong> Kecepatan linier seorang anak yang duduk pada jarak $r = 2.5$ m dari pusat, 
+                <strong>(c)</strong> Percepatan sentripetal yang dialami anak tersebut.
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">a</div><div class="text-lg font-medium">Mencari Kecepatan Sudut ($\omega$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\omega_0 = 0$ (diam), $\alpha = 0.060 \text{ rad/s}^2$, $t = 8.0$ s</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\omega$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan definisi percepatan sudut rata-rata, atau persamaan kinematika rotasi:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \omega = \omega_0 + \alpha t $$                         $$ \omega = 0 + (0.060 \text{ rad/s}^2)(8.0 \text{ s}) $$                         $$ \omega = \mathbf{0.48 \text{ rad/s}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">b</div><div class="text-lg font-medium">Mencari Kecepatan Linier ($v$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\omega = 0.48 \text{ rad/s}$, $r = 2.5$ m</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $v$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan hubungan kecepatan linier dan kecepatan sudut:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ v = r\omega = (2.5 \text{ m})(0.48 \text{ rad/s}) $$                         $$ v = \mathbf{1.2 \text{ m/s}} $$                     </div>
+                    <p class="text-xs mt-2" style="color:var(--muted);">Catatan: Satuan "rad" dihilangkan pada hasil akhir karena radian adalah besaran tanpa dimensi (rasio dua jarak).</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">c</div><div class="text-lg font-medium">Mencari Percepatan Sentripetal ($a_R$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\omega = 0.48 \text{ rad/s}$, $r = 2.5$ m</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $a_R$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan rumus percepatan sentripetal dalam variabel sudut:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ a_R = \omega^2 r = (0.48 \text{ rad/s})^2 (2.5 \text{ m}) $$                         $$ a_R = (0.2304)(2.5) \text{ m/s}^2 $$                         $$ a_R \approx \mathbf{0.58 \text{ m/s}^2} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Analisis Tambahan:</strong> Ada juga percepatan tangensial ($a_{\text{tan}} = r\alpha = 0.15 \text{ m/s}^2$). Percepatan total anak tersebut adalah resultan dari $a_R$ dan $a_{\text{tan}}$. Namun karena $a_R$ jauh lebih besar, anak tersebut kebanyakan merasa "ditarik" ke luar oleh gaya sentrifugal semu.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: PERCEPATAN SUDUT KONSTAN -->
+<section class="slide" id="slide6">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Kinematika Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Percepatan Sudut Konstan</h2>
+        
+        <div class="mb-6 anim-up-d2">
+            <p class="text-lg mb-4" style="color:var(--muted);">Sama seperti gerak linier, jika percepatan sudut $\alpha$ konstan, kita dapat menggunakan persamaan kinematika rotasi. Perhatikan analogi yang sangat kuat antara keduanya:</p>
+            
+            <div class="card overflow-hidden">
+                <table class="w-full text-left text-base" style="border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, rgba(13,148,136,0.1), rgba(249,115,22,0.05));">
+                            <th class="p-4 font-bold text-lg" style="color:var(--accent); width: 50%; border-bottom: 2px solid var(--accent);">Gerak Linier ($a$ konstan)</th>
+                            <th class="p-4 font-bold text-lg" style="color:var(--accent2); width: 50%; border-bottom: 2px solid var(--accent2);">Gerak Rotasi ($\alpha$ konstan)</th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:var(--fg);">
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="p-4">$v = v_0 + at$</td>
+                            <td class="p-4">$ \omega = \omega_0 + \alpha t $</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="p-4">$x = v_0 t + \frac{1}{2}at^2$</td>
+                            <td class="p-4">$ \theta = \omega_0 t + \frac{1}{2}\alpha t^2 $</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="p-4">$v^2 = v_0^2 + 2ax$</td>
+                            <td class="p-4">$ \omega^2 = \omega_0^2 + 2\alpha\theta $</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4">$ \bar{v} = \frac{v + v_0}{2} $</td>
+                            <td class="p-4">$ \bar{\omega} = \frac{\omega + \omega_0}{2} $</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-sm mt-3 text-center" style="color:var(--muted);">Syarat: $x_0 = 0$ dan $\theta_0 = 0$ pada $t_0 = 0$</p>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 6 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Sentrifuger Laboratorium</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+               Rotor sebuah sentrifuger dipercepat dari diam hingga mencapai 20.000 rpm dalam waktu 30 detik. 
+                <strong>(a)</strong> Berapakah percepatan sudut rata-ratanya? 
+                <strong>(b)</strong> Berapa putaran (revolusi) yang telah dilakukan rotor selama periode percepatan ini? (Asumsikan $\alpha$ konstan)
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">a</div><div class="text-lg font-medium">Mencari Percepatan Sudut ($\alpha$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\omega_0 = 0$, $\omega = 20.000 \text{ rpm}$, $\Delta t = 30 \text{ s}$</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\alpha$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Langkah 1: Konversi $\omega$ ke rad/s agar seragam dalam satuan SI.</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ \omega = (20.000 \text{ rev/min}) \times \frac{2\pi \text{ rad}}{1 \text{ rev}} \times \frac{1 \text{ min}}{60 \text{ s}} \approx 2094 \text{ rad/s} $$                     </div>
+                    <p class="text-sm mt-2 mb-1" style="color:var(--muted);">Langkah 2: Gunakan persamaan kinematika rotasi.</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \alpha = \frac{\omega - \omega_0}{\Delta t} = \frac{2094 \text{ rad/s} - 0}{30 \text{ s}} \approx \mathbf{70 \text{ rad/s}^2} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">b</div><div class="text-lg font-medium">Mencari Jumlah Revolusi ($\theta$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> Jumlah revolusi?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Kita cari sudut putar total dalam radian terlebih dahulu menggunakan persamaan $\theta = \omega_0 t + \frac{1}{2}\alpha t^2$:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ \theta = 0 + \frac{1}{2}(70 \text{ rad/s}^2)(30 \text{ s})^2 = 31.500 \text{ rad} $$                     </div>
+                    <p class="text-sm mt-2 mb-1" style="color:var(--muted);">Kemudian konversi radian ke revolusi (1 rev = $2\pi$ rad):</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \text{Jumlah rev} = \frac{31.500 \text{ rad}}{2\pi \text{ rad/rev}} \approx \mathbf{5.013 \text{ rev}} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Catatan:</strong> Anda juga bisa menggunakan persamaan $\omega^2 = \omega_0^2 + 2\alpha\theta$ untuk mendapatkan $\theta$, dan hasilnya akan identik!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 7: GERAK MENGGELENDING -->
+<section class="slide" id="slide7">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Konsep Lanjutan</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Gerak Menggelinding (Tanpa Selip)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Gerak menggelinding adalah kombinasi antara <strong>translasi</strong> (berpindah) dan <strong>rotasi</strong> (berputar). Jika tidak ada selipan, titik kontak benda dengan tanah sesaat diam.</p>
+                
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent2);">Syarat Tanpa Selip (No Slipping)</h4>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Jarak linier yang ditempuh pusat massa sama dengan panjang busur yang dilalui titik pada rim roda:</p>
+                    <div class="math-block text-center" style="font-size: 1.3rem;">
+                        $$ v = r\omega \quad \text{dan} \quad d = r\theta $$                     </div>
+                    <p class="text-xs mt-2" style="color:var(--muted);">Di mana $d$ adalah jarak tempuh linier, dan $v$ adalah kecepatan linier pusat massa.</p>
+                </div>
+
+                <div class="card p-5" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent);"><i class="fa-solid fa-eye mr-2"></i>Analisis Dua Frame Referensi</h4>
+                    <ul class="space-y-2 text-sm" style="color:var(--fg);">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-globe mt-1" style="color:var(--accent); font-size: 0.8rem;"></i>
+                            <span><strong>Frame Tanah:</strong> Pusat roda bergerak ke kanan dengan kecepatan $v$, titik kontak P sesaat diam.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-notch mt-1" style="color:var(--accent2); font-size: 0.8rem;"></i>
+                            <span><strong>Frame Roda (Aksel):</strong> Kita bergerak bersama pusat roda. Tanah bergerak ke kiri dengan $-v$, dan roda hanya melakukan rotasi murni ($v_{rim} = r\omega$).</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-center">
+                <!-- GANTI DENGAN FIGURE 8-8 DARI GIANCOLI -->
+                <img src="gambar/gambar-5.png" alt="Roda Menggelinding Tanpa Selip" class="w-full h-auto object-contain rounded-lg mb-3" style="max-height: 380px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                <span class="text-xs font-semibold text-center" style="color:var(--muted);">Ilustrasi roda menggelinding dari dua frame referensi</span>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 7 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Sepeda yang Melambat</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Sebuah sepeda melambat secara seragam dari $v_0 = 8.40 \text{ m/s}$ hingga diam pada jarak $d = 115 \text{ m}$. Diameter ban sepeda adalah $68.0 \text{ cm}$. Tentukan: 
+                <strong>(a)</strong> Kecepatan sudut awal ban ($\omega_0$), 
+                <strong>(b)</strong> Jumlah putaran total yang dilakukan ban sebelum berhenti, 
+                <strong>(c)</strong> Percepatan sudut ban ($\alpha$).
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">a</div><div class="text-lg font-medium">Mencari Kecepatan Sudut Awal ($\omega_0$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $v_0 = 8.40 \text{ m/s}$, $r = \frac{68.0}{2} = 34.0 \text{ cm} = 0.34 \text{ m}$</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\omega_0$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan hubungan gerak menggelinding $v = r\omega$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \omega_0 = \frac{v_0}{r} = \frac{8.40 \text{ m/s}}{0.34 \text{ m}} \approx \mathbf{24.7 \text{ rad/s}} $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">b</div><div class="text-lg font-medium">Mencari Jumlah Putaran Total</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $d = 115 \text{ m}$, $r = 0.34 \text{ m}$</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> Jumlah revolusi?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Setiap satu putaran penuh, sepeda melaju sejauh keliling ban ($2\pi r$). Maka jumlah putaran adalah jarak total dibagi keliling:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ \text{Jumlah putaran} = \frac{d}{2\pi r} = \frac{115 \text{ m}}{2\pi(0.34 \text{ m})} \approx \mathbf{53.8 \text{ rev}} $$                     </div>
+                    <p class="text-xs mt-2" style="color:var(--muted);">Secara sudut, hal ini setara dengan $\theta = 53.8 \times 2\pi \approx 338 \text{ rad}$.</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">c</div><div class="text-lg font-medium">Mencari Percepatan Sudut ($\alpha$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Diketahui:</strong> $\omega_0 = 24.7 \text{ rad/s}$, $\omega = 0$, $\theta = 338 \text{ rad}$</p>
+                    <p class="mb-2 text-sm"><strong>Ditanya:</strong> $\alpha$?</p>
+                    <p class="mb-2 text-sm"><strong>Jawab:</strong></p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Gunakan persamaan kinematika rotasi yang tidak memuat waktu $t$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \omega^2 = \omega_0^2 + 2\alpha\theta $$                         $$ 0 = (24.7)^2 + 2\alpha(338) $$                         $$ \alpha = \frac{-(24.7)^2}{2(338)} \approx \mathbf{-0.902 \text{ rad/s}^2} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(13,148,136,0.1); color: var(--accent); border-left: 3px solid var(--accent);">
+                        <i class="fa-solid fa-star mr-1"></i> Tanda negatif menunjukkan bahwa percepatan sudut berlawanan arah dengan kecepatan sudut (benda sedang melambat/deselerasi).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 8: TORSI -->
+<section class="slide" id="slide8">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Dinamika Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Torsi (Torque)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Gaya menyebabkan benda bergerak translasi, tetapi apa yang menyebabkan benda berputar? Jawabannya adalah <strong>Torsi</strong> ($\tau$). Torsi bergantung pada 3 faktor: besar gaya, titik kerja gaya, dan arah gaya.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.4rem;">
+                    $$ \tau = r_\perp F = r F \sin\theta $$                 </div>
+                <p class="text-base mt-4" style="color:var(--muted);">Di mana:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-2 text-base" style="color:var(--fg);">
+                    <li><strong>$r_\perp$</strong> = Lengan momen (lever arm), jarak tegak lurus dari poros ke garis kerja gaya.</li>
+                    <li><strong>$r$</strong> = Jarak dari poros ke titik gaya dikerjakan.</li>
+                    <li><strong>$\theta$</strong> = Sudut antara vektor $\vec{F}$ dan vektor $\vec{r}$.</li>
+                </ul>
+                
+                <div class="card p-4 mt-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-base mb-1" style="color:var(--accent2);">Satuan Torsi:</h4>
+                    <p class="text-sm" style="color:var(--fg);">Newton-meter (N·m). <strong>Bukan</strong> Joule! Meskipun dimensinya sama, torsi bukan energi.</p>
+                </div>
+            </div>
+
+            <!-- SIMULASI INTERAKTIF TORSI -->
+            <div class="card p-6" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+                <h4 class="font-bold text-lg mb-3 text-center" style="color:var(--accent);"><i class="fa-solid fa-door-open mr-2"></i>Simulasi: Mendorong Pintu</h4>
+                <div class="p-3 rounded-lg mb-4 text-center" style="background: #f1f5f9; border: 1px solid var(--border);">
+                    <canvas id="torqueCanvas" width="400" height="280" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-sm" style="color:var(--accent);">Sudut Gaya ($\theta$)</span>
+                        <span class="font-bold text-base" style="color:var(--accent);" id="thetaTorqueDisplay">90°</span>
+                    </div>
+                    <input type="range" id="thetaTorqueSlider" min="0" max="180" value="90" oninput="updateTorqueSim()">
+                </div>
+                
+                <div class="p-4 rounded-xl text-center" style="background: var(--bg); border: 2px dashed var(--border);">
+                    <div class="text-sm font-semibold mb-2" style="color:var(--muted);">Hasil Perhitungan Torsi:</div>
+                    <div class="font-bold text-base mb-1" style="font-family: 'Courier New', monospace;">
+                        τ = r F sin(θ) = (1.0 m)(50 N) sin(<span id="thetaTorqueCalc">90</span>°)
+                    </div>
+                    <div class="font-black text-4xl my-2" id="torqueResultDisplay" style="color: var(--accent);">50.0 N·m</div>
+                    <div class="text-sm font-bold" id="torqueStatusDisplay" style="color: var(--accent);">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Torsi Maksimum (Gaya Tegak Lurus)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KESIMPULAN TORSI -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 anim-up-d3">
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--accent);">
+                <div class="text-2xl font-black mb-2" style="color:var(--accent);">θ = 90°</div>
+                <p class="font-semibold text-base mb-2">Torsi Maksimum</p>
+                <p class="text-sm" style="color:var(--muted);">Gaya tegak lurus terhadap pintu. Lengan momen $r_\perp = r$. Paling mudah membuka pintu.</p>
+            </div>
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--accent2);">
+                <div class="text-2xl font-black mb-2" style="color:var(--accent2);">0° < θ < 90°</div>
+                <p class="font-semibold text-base mb-2">Torsi Parsial</p>
+                <p class="text-sm" style="color:var(--muted);">Hanya komponen $F \sin\theta$ yang efektif memutar pintu. Lengan momen memendek.</p>
+            </div>
+            <div class="card p-5 text-center" style="border-top: 4px solid var(--muted);">
+                <div class="text-2xl font-black mb-2" style="color:var(--muted);">θ = 0° atau 180°</div>
+                <p class="font-semibold text-base mb-2">Torsi Nol</p>
+                <p class="text-sm" style="color:var(--muted);">Gaya sejajar dengan pintu (mendorong engsel). Tidak ada rotasi yang terjadi.</p>
+            </div>
+        </div>
+
+        <!-- PROMPT KONSEPTUAL -->
+        <div class="card p-5 anim-up-d4" style="border-left: 4px solid var(--accent);">
+            <div class="prompt-wrapper" style="border: none; padding: 0; margin: 0; background: transparent;">
+                <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-lg font-medium">Mengapa Kunci Inggris (Wrench) Punya Gagang Panjang?</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box" style="border-left-color: var(--accent);">
+                    <p class="text-sm" style="color:var(--fg);">Karena $\tau = r_\perp F$. Untuk menghasilkan torsi $\tau$ yang sama (misalnya untuk mengendorkan baut yang sangat kencang), jika Anda menambah jarak $r$ (menggunakan gagang yang lebih panjang), maka gaya $F$ yang Anda butuhkan akan menjadi <strong>lebih kecil</strong>. Ini adalah prinsip tuas/lever yang sangat menguntungkan secara mekanis!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 9: DINAMIKA ROTASI - HUKUM NEWTON II -->
+<section class="slide" id="slide9">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Dinamika Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Hukum Newton II untuk Rotasi</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Jika Hukum Newton II untuk translasi adalah $\Sigma F = ma$, apa padanannya untuk rotasi? Torsi ($\tau$) berperan sebagai gaya, dan momen inersia ($I$) berperan sebagai massa.</p>
+                
+                <div class="card p-6 mb-4" style="border-top: 4px solid var(--accent); background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(249,115,22,0.02));">
+                    <h4 class="font-bold text-xl mb-3 text-center" style="color:var(--accent);">Hukum Newton II Rotasi</h4>
+                    <div class="math-block text-center" style="font-size: 1.6rem; border-left-color: var(--accent);">
+                        $$ \Sigma \tau = I\alpha $$                     </div>
+                </div>
+
+                <div class="card p-5" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-3" style="color:var(--accent2);"><i class="fa-solid fa-scale-balanced mr-2"></i>Analogi Translasi vs Rotasi</h4>
+                    <table class="w-full text-base" style="color:var(--fg);">
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2 font-semibold" style="color:var(--accent);">Translasi</td>
+                            <td class="py-2 font-semibold" style="color:var(--accent2);">Rotasi</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2">Gaya ($F$)</td>
+                            <td class="py-2">Torsi ($\tau$)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2">Massa ($m$)</td>
+                            <td class="py-2">Momen Inersia ($I$)</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2">Percepatan ($a$)</td>
+                            <td class="py-2">Percepatan Sudut ($\alpha$)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-bold mb-4" style="color:var(--accent);">Derivasi Matematis</h3>
+                <p class="text-base mb-4" style="color:var(--muted);">Mari kita turunkan hukum ini dari partikel tunggal yang berputar pada ujung tali sepanjang $r$.</p>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Mulai dari Hukum Newton II Translasi</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2">Gaya $F$ bekerja tangensial pada partikel bermassa $m$, menghasilkan percepatan linier $a$:</p>
+                        <div class="math-block-teal math-block" style="font-size: 1rem;">
+                            $$ F = ma $$                         </div>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Hubungkan dengan Besaran Rotasi</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2">Kita tahu bahwa percepatan tangensial berhubungan dengan percepatan sudut: $a_{\text{tan}} = r\alpha$. Substitusikan ke persamaan gaya:</p>
+                        <div class="math-block-teal math-block" style="font-size: 1rem;">
+                            $$ F = m(r\alpha) = mr\alpha $$                         </div>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Kalikan dengan Jari-jari ($r$) untuk mendapatkan Torsi</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2">Torsi adalah gaya dikali lengan momen ($\tau = rF$). Kalikan kedua ruas dengan $r$:</p>
+                        <div class="math-block" style="font-size: 1rem;">
+                            $$ \tau = rF = r(mr\alpha) $$                             $$ \tau = (mr^2)\alpha $$                         </div>
+                        <p class="text-sm mt-2" style="color:var(--muted);">Untuk benda tegar yang terdiri dari banyak partikel, kita jumlahkan: $\Sigma \tau = (\Sigma mr^2)\alpha = I\alpha$.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 10: MOMEN INERSIA -->
+<section class="slide" id="slide10">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Dinamika Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Momen Inersia ($I$)</h2>
+        
+        <!-- LAYOUT 2:3 UNTUK KONSEP DAN TABEL -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6 anim-up-d2">
+            <div class="md:col-span-2">
+                <p class="text-lg mb-4" style="color:var(--muted);">Momen inersia adalah ukuran keengganan benda untuk berubah keadaan rotasinya (analogi dari massa pada translasi). Nilainya bergantung pada <strong>distribusi massa</strong> terhadap <strong>poros rotasi</strong>.</p>
+                
+                <div class="math-block text-center" style="font-size: 1.4rem;">
+                    $$ I = \Sigma m_i r_i^2 $$                 </div>
+
+                <!-- PROMPT: MENGAPA RUMUSNYA SEPERTI ITU? -->
+                <div class="prompt-wrapper mt-4">
+                    <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Mengapa rumusnya $I = \Sigma m r^2$?</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Derivasi Fisikanya</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2">Mari kita ingat kembali Hukum Newton II untuk Rotasi: $\Sigma\tau = I\alpha$. Kita akan melihat dari mana bagian $mr^2$ berasal.</p>
+                        
+                        <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 1: Satu Partikel yang Berputar</p>
+                        <p class="text-sm mb-2" style="color:var(--muted);">Bayangkan satu partikel bermassa $m$ di ujung tali sepanjang $r$. Gaya $F$ dikerjakan tangensial sehingga menimbulkan torsi $\tau = rF$.</p>
+                        <div class="math-block-teal math-block" style="font-size: 1rem; margin-bottom: 0.5rem;">
+                            $$ \tau = rF $$                         </div>
+
+                        <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 2: Substitusi Hukum Newton II Translasi</p>
+                        <p class="text-sm mb-2" style="color:var(--muted);">Gaya $F$ pada partikel menimbulkan percepatan tangensial $a_{\text{tan}}$, sehingga $F = ma_{\text{tan}}$.</p>
+                        <div class="math-block-teal math-block" style="font-size: 1rem; margin-bottom: 0.5rem;">
+                            $$ \tau = r(ma_{\text{tan}}) $$                         </div>
+
+                        <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 3: Hubungkan dengan Percepatan Sudut</p>
+                        <p class="text-sm mb-2" style="color:var(--muted);">Kita tahu $a_{\text{tan}} = r\alpha$. Substitusikan ke persamaan torsi:</p>
+                        <div class="math-block" style="font-size: 1rem; margin-bottom: 0.5rem;">
+                            $$ \tau = r(m \cdot r\alpha) = (mr^2)\alpha $$                         </div>
+
+                        <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 4: Bandingkan dengan $\tau = I\alpha$</p>
+                        <p class="text-sm mb-2" style="color:var(--fg);">Dari persamaan $\tau = (mr^2)\alpha$ dan membandingkannya dengan $\tau = I\alpha$, kita dapatkan:</p>
+                        <div class="math-block" style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            $$ I = mr^2 \quad \text{(untuk 1 partikel)} $$                         </div>
+                        <p class="text-sm mt-2" style="color:var(--fg);">Karena benda tegar terdiri dari banyak partikel, kita jumlahkan kontribusi setiap partikel: $I = m_1r_1^2 + m_2r_2^2 + \dots = \Sigma m_i r_i^2$.</p>
+                        
+                        <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(249,115,22,0.1); color: var(--accent2); border-left: 3px solid var(--accent2);">
+                            <i class="fa-solid fa-star mr-1"></i> <strong>Insight Kunci:</strong> Karena $r$ dikuadratkan, massa yang berada jauh dari poros memberikan kontribusi yang <em>sangat besar</em> terhadap inersia rotasi dibandingkan massa yang berada dekat dengan poros!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-3 flex flex-col items-center justify-start">
+                <!-- TABEL MOMEN INERSIA -->
+                <img src="gambar/gambar-6.png" alt="Tabel Momen Inersia Benda Tegar" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 520px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                <span class="text-xs font-semibold text-center" style="color:var(--muted);">Tabel Momen Inersia untuk berbagai benda tegar seragam (Giancoli, Fig. 8-20)</span>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL DENGAN GAMBAR 8-19 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Dua Beban pada Batang</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+                <!-- Kolom Kiri: Soal dan Pembahasan -->
+                <div class="md:col-span-3">
+                    <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                        Dua beban kecil bermassa $m_1 = 5.0 \text{ kg}$ dan $m_2 = 7.0 \text{ kg}$ dipasang pada batang ringan sejauh $4.0 \text{ m}$. Hitunglah momen inersia sistem jika diputar pada: 
+                        <strong>(a)</strong> Poros di tengah antara kedua beban, 
+                        <strong>(b)</strong> Poros $0.50 \text{ m}$ di sebelah kiri beban $m_1$.
+                    </p>
+
+                    <div class="prompt-wrapper">
+                        <div class="prompt-header"><div class="prompt-icon">a</div><div class="text-lg font-medium">Poros di Tengah</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                        <div class="discussion-box">
+                            <p class="mb-2 text-sm"><strong>Diketahui:</strong> $r_1 = 2.0 \text{ m}$, $r_2 = 2.0 \text{ m}$ (lihat gambar (a))</p>
+                            <div class="math-block-teal math-block" style="font-size: 1rem;">
+                                $$ I = \Sigma mr^2 = m_1 r_1^2 + m_2 r_2^2 $$                                 $$ I = (5.0)(2.0)^2 + (7.0)(2.0)^2 $$                                 $$ I = 20 + 28 = \mathbf{48 \text{ kg}\cdot\text{m}^2} $$                             </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-wrapper">
+                        <div class="prompt-header"><div class="prompt-icon">b</div><div class="text-lg font-medium">Poros di Dekat $m_1$</div></div>
+                        <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                        <div class="discussion-box">
+                            <p class="mb-2 text-sm"><strong>Diketahui:</strong> $r_1 = 0.50 \text{ m}$, $r_2 = 4.50 \text{ m}$ (lihat gambar (b))</p>
+                            <div class="math-block" style="font-size: 1rem;">
+                                $$ I = m_1 r_1^2 + m_2 r_2^2 $$                                 $$ I = (5.0)(0.50)^2 + (7.0)(4.50)^2 $$                                 $$ I = 1.25 + 141.75 \approx \mathbf{143 \text{ kg}\cdot\text{m}^2} $$                             </div>
+                            <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(13,148,136,0.1); color: var(--accent); border-left: 3px solid var(--accent);">
+                                <i class="fa-solid fa-star mr-1"></i> <strong>Perhatikan:</strong> Hanya dengan memindahkan poros, $I$ meningkat drastis (dari 48 menjadi 143)! Massa $m_1$ yang dekat dengan poros hampir tidak berpengaruh (hanya 1.25), sementara $m_2$ yang jauh mendominasi inersia total.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Gambar Figure 8-19 -->
+                <div class="md:col-span-2 flex flex-col items-center justify-center">
+                    <img src="gambar/gambar-8.png" alt="Dua Beban pada Batang dengan Poros Berbeda" class="w-full h-auto object-contain rounded-lg mb-2" style="max-height: 320px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                    <span class="text-xs font-semibold text-center" style="color:var(--muted);">Ilustrasi perpindahan poros rotasi (Giancoli, Fig. 8-19)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 11: STUDI KASUS KATROL & EMBER -->
+<section class="slide" id="slide11">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Studi Kasus Integratif</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Katrol dan Ember (Atwood Machine)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start mb-6 anim-up-d2">
+            <div class="md:col-span-3">
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent2);"><i class="fa-solid fa-flask mr-2"></i>Deskripsi Soal</h4>
+                    <p class="text-base" style="color:var(--fg); line-height: 1.7;">
+                        Sebuah katrol bermassa $M = 4.00 \text{ kg}$ dan jari-jari $R = 33.0 \text{ cm}$ digantungi tali yang ujungnya diikat pada ember bermassa $m = 1.53 \text{ kg}$. Katrol memiliki torsi gesekan $\tau_{fr} = 1.10 \text{ N}\cdot\text{m}$. Hitunglah: <strong>(a)</strong> Percepatan sudut katrol ($\alpha$), <strong>(b)</strong> Percepatan linier ember ($a$).
+                    </p>
+                </div>
+                
+                <p class="text-base mb-3" style="color:var(--fg);">Ini adalah contoh klasik di mana kita harus menggabungkan Hukum Newton II untuk <strong>Translasi</strong> (ember) dan <strong>Rotasi</strong> (katrol).</p>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Hukum Newton II Rotasi (untuk Katrol)</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Penurunan Detail</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2" style="color:var(--fg);">Fokus pada katrol. Ada dua torsi yang bekerja:</p>
+                        <ul class="list-disc pl-5 text-sm mb-3 space-y-1" style="color:var(--muted);">
+                            <li><strong>Torsi oleh Tali ($\tau_{tali}$):</strong> Gaya tegangan tali $F_T$ menarik rim katrol ke bawah. Lengan momennya adalah $R$. Karena searah putaran (CCW), torsi ini <strong>positif</strong>: $\tau_{tali} = +F_T \cdot R$</li>
+                            <li><strong>Torsi Gesekan ($\tau_{fr}$):</strong> Melawan putaran. Karena berlawanan arah, torsi ini <strong>negatif</strong>: $\tau_{gesek} = -\tau_{fr}$</li>
+                        </ul>
+                        <p class="text-sm mb-2" style="color:var(--fg);">Momen inersia katrol (silinder padat) adalah $I = \frac{1}{2}MR^2$. Maka Hukum Newton II Rotasi $\Sigma\tau = I\alpha$ ditulis:</p>
+                        <div class="math-block" style="font-size: 1rem;">
+                            $$ \Sigma\tau = \tau_{tali} + \tau_{gesek} $$                             $$ F_T \cdot R - \tau_{fr} = I\alpha $$                         </div>
+                        <p class="text-xs mt-2" style="color:var(--accent2);"><i class="fa-solid fa-info-circle mr-1"></i> Di sini kita punya 2 variabel yang belum diketahui: $F_T$ dan $\alpha$. Kita butuh persamaan lain!</p>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Hukum Newton II Translasi (untuk Ember)</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Penurunan Detail</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2" style="color:var(--fg);">Fokus pada ember. Ada dua gaya vertikal:</p>
+                        <ul class="list-disc pl-5 text-sm mb-3 space-y-1" style="color:var(--muted);">
+                            <li><strong>Berat ($w = mg$):</strong> Mengarah ke bawah.</li>
+                            <li><strong>Tegangan Tali ($F_T$):</strong> Menarik ke atas.</li>
+                        </ul>
+                        <p class="text-sm mb-2" style="color:var(--fg);">Ambil arah bawah (arah gerak ember) sebagai positif. Maka Hukum Newton II Translasi $\Sigma F = ma$ ditulis:</p>
+                        <div class="math-block-teal math-block" style="font-size: 1rem;">
+                            $$ \Sigma F = w - F_T = ma $$                             $$ mg - F_T = ma $$                         </div>
+                        <p class="text-xs mt-2" style="color:var(--accent2);"><i class="fa-solid fa-exclamation-triangle mr-1"></i> <strong>Kesalahan Umum:</strong> Jangan menganggap $F_T = mg$! Jika $F_T = mg$, maka $\Sigma F = 0$, sehingga $a = 0$ (ember tidak dipercepat). Karena ember jatuh dipercepat, pasti $mg > F_T$.</p>
+                    </div>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Hubungan Percepatan Linier dan Sudut</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Penjelasan</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2" style="color:var(--fg);">Bagaimana menghubungkan gerak linier ember dengan gerak rotasi katrol? Kuncinya: <strong>tali tidak selip</strong>.</p>
+                        <p class="text-sm mb-3" style="color:var(--muted);">Kecepatan linier ember ($v$) harus sama dengan kecepatan tepi katrol ($v_{rim}$). Begitu juga percepatannya:</p>
+                        <div class="math-block" style="font-size: 1rem;">
+                            $$ a_{ember} = a_{tangensial \, katrol} $$                             $$ a = R\alpha \quad \implies \quad \alpha = \frac{a}{R} $$                         </div>
+                        <p class="text-xs mt-2" style="color:var(--accent);">Kita akan memakai hubungan $\alpha = \frac{a}{R}$ nanti untuk menyatukan dua persamaan Newton di atas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 flex flex-col items-center justify-center">
+                <!-- FIGURE 8-22 DARI GIANCOLI -->
+                <img src="gambar/gambar-7.png" alt="Katrol dan Ember" class="w-full h-auto object-contain rounded-lg mb-3" style="max-height: 400px; background: #fff; padding: 5px; border: 1px solid var(--border);">
+                <span class="text-xs font-semibold text-center" style="color:var(--muted);">Diagram benda bebas katrol dan ember (Fig. 8-22)</span>
+                
+                <div class="card p-4 mt-4 w-full" style="background: rgba(13,148,136,0.05); border: 1px dashed var(--accent);">
+                    <div class="text-sm font-semibold mb-2" style="color:var(--accent);">Data Sistem:</div>
+                    <ul class="text-sm space-y-1" style="color:var(--fg);">
+                        <li>$M = 4.00 \text{ kg}$</li>
+                        <li>$R = 0.330 \text{ m}$</li>
+                        <li>$I = \frac{1}{2}MR^2 = 0.218 \text{ kg}\cdot\text{m}^2$</li>
+                        <li>$m = 1.53 \text{ kg}$ ($mg \approx 15.0 \text{ N}$)</li>
+                        <li>$\tau_{fr} = 1.10 \text{ N}\cdot\text{m}$</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENYELESAIAN AKHIR -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-calculator" style="color:var(--accent2);"></i> Penyelesaian Akhir: Eliminasi & Substitusi</h4>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">4</div><div class="text-lg font-medium">Substitusi dan Eliminasi Tegangan ($F_T$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah Aljabar Detail</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-2"><strong>Tujuan:</strong> Kita ingin menghilangkan $F_T$ sehingga kita mendapat persamaan yang hanya berisi $\alpha$ (atau $a$).</p>
+                    
+                    <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 4a: Uraikan $F_T$ dari persamaan Ember (Langkah 2)</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ mg - F_T = ma \implies F_T = mg - ma $$                     </div>
+                    <p class="text-xs mt-1 mb-3" style="color:var(--muted);">Karena kita ingin mencari $\alpha$, ganti $a$ menjadi $R\alpha$ (dari Langkah 3):</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ F_T = mg - m(R\alpha) $$                     </div>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Langkah 4b: Masukkan $F_T$ ini ke persamaan Katrol (Langkah 1)</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ F_T \cdot R - \tau_{fr} = I\alpha $$                         $$ (mg - mR\alpha) \cdot R - \tau_{fr} = I\alpha $$                     </div>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Langkah 4c: Jabarkan dan pindahkan ruas</p>
+                    <p class="text-xs mt-1 mb-1" style="color:var(--muted);">Kalikan $R$ ke dalam kurung:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ mgR - mR^2\alpha - \tau_{fr} = I\alpha $$                     </div>
+                    <p class="text-xs mt-2 mb-1" style="color:var(--muted);">Pindahkan suku yang mengandung $\alpha$ ke ruas kanan, dan suku konstan ke ruas kiri:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ mgR - \tau_{fr} = I\alpha + mR^2\alpha $$                     </div>
+                    <p class="text-xs mt-2 mb-1" style="color:var(--muted);">Keluarkan faktor $\alpha$:</p>
+                    <div class="math-block" style="font-size: 1.1rem;">
+                        $$ mgR - \tau_{fr} = (I + mR^2)\alpha $$                     </div>
+                    <p class="text-xs mt-2" style="color:var(--accent2);"><i class="fa-solid fa-lightbulb mr-1"></i> <strong>Insight Fisika:</strong> Penyebutnya $(I + mR^2)$ adalah "Inersia Total Sistem". Inersia katrol ($I$) ditambah kontribusi inersia ember yang sedang bertranslasi ($mR^2$).</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">5</div><div class="text-lg font-medium">Mencari Percepatan Sudut ($\alpha$) dan Linier ($a$)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Kalkulasi Detail</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-3">Dari hasil akhir Langkah 4c, kita isolasi $\alpha$ agar berada di satu ruas:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1.1rem;">
+                        $$ \alpha = \frac{mgR - \tau_{fr}}{I + mR^2} $$                     </div>
+
+                    <p class="text-sm mt-4 mb-3">Dari persamaan di atas, mari kita identifikasi bagian-bagiannya agar mudah menghitungnya:</p>
+                    <ul class="list-disc pl-5 text-sm mb-4 space-y-2" style="color:var(--fg);">
+                        <li><strong>Pembilang = $mgR - \tau_{fr}$</strong> &rarr; Ini adalah <strong>Torsi Neto penyebab gerak</strong> (Torsi berat ember dikurangi torsi gesekan penghambat).</li>
+                        <li><strong>Penyebut = $I + mR^2$</strong> &rarr; Ini adalah <strong>Inersia Total penghambat gerak</strong> (Inersia rotasi katrol + Inersia translasi ember).</li>
+                    </ul>
+
+                    <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent);">Langkah 5a: Hitung Pembilang (Torsi Neto Sistem)</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \text{Pembilang} = mgR - \tau_{fr} $$                         $$ \text{Pembilang} = (15.0 \text{ N})(0.330 \text{ m}) - 1.10 \text{ N}\cdot\text{m} $$                         $$ \text{Pembilang} = 4.95 - 1.10 = \mathbf{3.85 \text{ N}\cdot\text{m}} $$                     </div>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Langkah 5b: Hitung Penyebut (Inersia Total Sistem)</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \text{Penyebut} = I + mR^2 $$                         $$ \text{Penyebut} = 0.218 \text{ kg}\cdot\text{m}^2 + (1.53 \text{ kg})(0.330 \text{ m})^2 $$                         $$ \text{Penyebut} = 0.218 + 0.167 = \mathbf{0.385 \text{ kg}\cdot\text{m}^2} $$                     </div>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Langkah 5c: Hitung Percepatan Sudut ($\alpha$)</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \alpha = \frac{\text{Pembilang}}{\text{Penyebut}} = \frac{3.85}{0.385} = \mathbf{10.0 \text{ rad/s}^2} $$                     </div>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Langkah 5d: Hitung Percepatan Linier Ember ($a$)</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ a = R\alpha = (0.330 \text{ m})(10.0 \text{ rad/s}^2) = \mathbf{3.30 \text{ m/s}^2} $$                     </div>
+
+                    <div class="mt-4 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Analisis Cerdas:</strong> Percepatan ember ($3.30 \text{ m/s}^2$) lebih kecil dari $g$ ($9.8 \text{ m/s}^2$). Mengapa? Karena sebagian energi gravitasi digunakan untuk mengalahkan inersia rotasi katrol dan gesekan. Jika katrol tak bermassa dan licin, ember akan jatuh dengan $a \approx g$.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 12: ENERGI KINETIK ROTASI -->
+<section class="slide" id="slide12">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(13,148,136,0.1);color:var(--accent);">Energi Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Energi Kinetik Rotasi</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Benda yang berputar memiliki energi kinetik, persis seperti benda yang bergerak translasi. Rumusnya sangat analog dengan $KE_{trans} = \frac{1}{2}mv^2$.</p>
+                
+                <div class="card p-5 mb-4" style="border-top: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent2);">Energi Kinetik Rotasi</h4>
+                    <div class="math-block text-center" style="font-size: 1.5rem;">
+                        $$ KE_{rot} = \frac{1}{2}I\omega^2 $$                     </div>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Di mana $I$ adalah momen inersia dan $\omega$ adalah kecepatan sudut.</p>
+                </div>
+
+                <div class="card p-5" style="border-top: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent);">Energi Kinetik Total (Benda Menggelinding)</h4>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Benda yang menggelinding tanpa selip memiliki energi kinetik total yang merupakan jumlah dari energi translasi PUSAT MASSA dan energi rotasi terhadap pusat massa:</p>
+                    <div class="math-block-teal math-block text-center" style="font-size: 1.2rem;">
+                        $$ KE_{total} = \frac{1}{2}mv^2 + \frac{1}{2}I\omega^2 $$                     </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 justify-center">
+                <div class="card p-5" style="background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(249,115,22,0.05)); border: 1px dashed var(--accent);">
+                    <h4 class="font-bold text-lg mb-3 text-center" style="color:var(--accent);">Analogi Energi Translasi vs Rotasi</h4>
+                    <table class="w-full text-base" style="color:var(--fg);">
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2 font-semibold" style="color:var(--accent);">Translasi</td>
+                            <td class="py-2 font-semibold" style="color:var(--accent2);">Rotasi</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2">Massa ($m$)</td>
+                            <td class="py-2">Momen Inersia ($I$)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td class="py-2">Kecepatan ($v$)</td>
+                            <td class="py-2">Kecepatan Sudut ($\omega$)</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 font-bold">$KE = \frac{1}{2}mv^2$</td>
+                            <td class="py-2 font-bold">$KE = \frac{1}{2}I\omega^2$</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Mengapa ada 2 komponen energi saat menggelinding?</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Penjelasan</button>
+                    <div class="discussion-box">
+                        <p class="text-sm mb-2" style="color:var(--fg);">Karena benda tersebut melakukan <strong>dua gerakan sekaligus</strong>:</p>
+                        <ul class="list-disc pl-5 text-sm space-y-1" style="color:var(--muted);">
+                            <li>Bergerak lurus ke depan (translasi) $\implies$ butuh energi $\frac{1}{2}mv^2$</li>
+                            <li>Berputar di tempat (rotasi) $\implies$ butuh energi $\frac{1}{2}I\omega^2$</li>
+                        </ul>
+                        <p class="text-sm mt-2" style="color:var(--fg);">Energi totalnya adalah jumlah keduanya. Ini adalah manifestasi langsung dari Teorema Usaha-Energi!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUKTI MATEMATIS SLIDE 2 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent2);"><i class="fa-solid fa-calculator mr-2" style="color:var(--accent);"></i> Pembuktian Soal Pembuka: Mana yang Lebih Cepat?</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Di slide pembuka, kita menyimpulkan bola padat sampai lebih dulu. Mari kita buktikan secara matematis menggunakan konsep Energi! Misalkan sebuah bola padat dan silinder padat menggelinding dari bidang miring setinggi $h$ tanpa selip.
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Konversi Energi (Hukum Kekekalan Mekanik)</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-2">Energi potensial gravitasi di atas diubah seluruhnya menjadi energi kinetik total di bawah (asumsikan tidak ada gesekan udara).</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ mgh = KE_{total} = \frac{1}{2}mv^2 + \frac{1}{2}I\omega^2 $$                     </div>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Substitusikan $\omega = v/r$ untuk menggelinding tanpa selip:</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ mgh = \frac{1}{2}mv^2 + \frac{1}{2}I\left(\frac{v^2}{r^2}\right) $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Mencari Kecepatan ($v$) Umum</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Langkah</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-2">Keluarkan faktor $v^2$ dan sederhanakan:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ mgh = \frac{1}{2}v^2 \left( m + \frac{I}{r^2} \right) $$                         $$ v^2 = \frac{2mgh}{m + \frac{I}{r^2}} = \frac{2gh}{1 + \frac{I}{mr^2}} \implies v = \sqrt{\frac{2gh}{1 + \frac{I}{mr^2}}} $$                     </div>
+                    <p class="text-xs mt-2" style="color:var(--accent2);"><i class="fa-solid fa-star mr-1"></i> <strong>Kuncinya:</strong> Semakin besar nilai $\frac{I}{mr^2}$, semakin kecil kecepatan $v$-nya! Massa dan jari-jari tidak berpengaruh pada urutan, yang berpengaruh adalah <strong>bentuk bendanya</strong> (menentukan $I$).</p>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">3</div><div class="text-lg font-medium">Bandingkan Bola Padat vs Silinder Padat</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembuktian Akhir</button>
+                <div class="discussion-box">
+                    <p class="text-sm mb-3">Dari persamaan umum, penyebutnya adalah $\left(1 + \frac{I}{mr^2}\right)$. Mari kita substitusikan rumus $I$ untuk masing-masing benda (lihat tabel Slide 10):</p>
+                    
+                    <p class="text-sm mt-3 mb-1 font-semibold" style="color:var(--accent2);">Kasus Silinder Padat:</p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Momen inersia $I = \frac{1}{2}mr^2$. Substitusikan ke pecahan $\frac{I}{mr^2}$ (perhatikan bahwa $m$ dan $r^2$ dicoret karena sama):</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \frac{I}{mr^2} = \frac{\frac{1}{2}mr^2}{mr^2} = \frac{1}{2} = 0.5 $$                     </div>
+                    <p class="text-sm mt-1 mb-2" style="color:var(--muted);">Maka penyebut totalnya: $1 + 0.5 = \mathbf{1.5}$</p>
+
+                    <p class="text-sm mt-4 mb-1 font-semibold" style="color:var(--accent);">Kasus Bola Padat:</p>
+                    <p class="text-sm mb-1" style="color:var(--muted);">Momen inersia $I = \frac{2}{5}mr^2$. Substitusikan ke pecahan $\frac{I}{mr^2}$:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \frac{I}{mr^2} = \frac{\frac{2}{5}mr^2}{mr^2} = \frac{2}{5} = 0.4 $$                     </div>
+                    <p class="text-sm mt-1 mb-3" style="color:var(--muted);">Maka penyebut totalnya: $1 + 0.4 = \mathbf{1.4}$</p>
+
+                    <p class="text-sm mb-3 mt-4" style="color:var(--fg);">Sekarang kita masukkan angka penyebut ini kembali ke persamaan kecepatan $v = \sqrt{\frac{2gh}{\text{penyebut}}}$:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-3 rounded-lg" style="background: rgba(249,115,22,0.05); border: 1px solid var(--accent2);">
+                            <span class="font-bold text-sm" style="color:var(--accent2);">Silinder Padat (Penyebut 1.5):</span>
+                            <div class="text-base font-bold mt-1">$v = \sqrt{\frac{2gh}{1.5}} \approx \sqrt{1.33gh}$</div>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(13,148,136,0.05); border: 1px solid var(--accent);">
+                            <span class="font-bold text-sm" style="color:var(--accent);">Bola Padat (Penyebut 1.4):</span>
+                            <div class="text-base font-bold mt-1">$v = \sqrt{\frac{2gh}{1.4}} \approx \sqrt{1.43gh}$</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Terbukti!</strong> Karena $1.43 > 1.33$, kecepatan bola padat lebih besar di dasar bidang miring. Bola padat sampai lebih dulu! Angka "1" pada penyebut mewakili energi untuk translasi, sedangkan "0.5" atau "0.4" mewakili "pajak" energi untuk rotasi. Bola padat bayar pajak rotasi lebih murah, jadi energinya lebih banyak dikonversi menjadi gerak maju!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 13: MOMENTUM SUDUT -->
+<section class="slide" id="slide13">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Momentum Rotasi</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-5 anim-up-d1">Momentum Sudut & Kekekalan</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 anim-up-d2">
+            <div>
+                <p class="text-lg mb-4" style="color:var(--muted);">Analogi terakhir dari gerak translasi! Jika benda bergerak linier memiliki momentum $p = mv$, maka benda berputar memiliki <strong>Momentum Sudut</strong> $L$.</p>
+                
+                <div class="card p-5 mb-4" style="border-left: 4px solid var(--accent);">
+                    <h4 class="font-bold text-lg mb-2" style="color:var(--accent);">Definisi Momentum Sudut</h4>
+                    <div class="math-block text-center" style="font-size: 1.5rem; border-left-color: var(--accent);">
+                        $$ L = I\omega $$                     </div>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Satuan: $\text{kg}\cdot\text{m}^2/\text{s}$</p>
+                </div>
+
+                <div class="card p-5" style="border-top: 4px solid var(--accent2);">
+                    <h4 class="font-bold text-lg mb-3" style="color:var(--accent2);">Hukum Kekekalan Momentum Sudut</h4>
+                    <p class="text-sm mb-3" style="color:var(--muted);">Jika tidak ada torsi luar neto yang bekerja pada sistem ($\Sigma\tau = 0$), maka momentum sudut total sistem tersebut kekal (konstan).</p>
+                    <div class="math-block text-center" style="font-size: 1.3rem;">
+                        $$ L_i = L_f \implies I_i\omega_i = I_f\omega_f $$                     </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <!-- Animasi CSS Sederhana: Skater -->
+                <div class="card p-5 text-center" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+                    <h4 class="font-bold text-lg mb-3" style="color:var(--accent);"><i class="fa-solid fa-person-skating mr-2"></i>Ilustrasi: Skater Berputar</h4>
+                    <div class="flex justify-center items-center gap-8 my-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 rounded-full flex items-center justify-center" style="background: rgba(13,148,136,0.1); border: 3px solid var(--accent);">
+                                <i class="fa-solid fa-person fa-2x" style="color:var(--accent); transform: rotate(-20deg);"></i>
+                            </div>
+                            <div class="text-xs mt-2 font-bold" style="color:var(--accent);">Lengan Dibuka</div>
+                            <div class="text-xs" style="color:var(--muted);">$I$ besar, $\omega$ kecil</div>
+                        </div>
+                        
+                        <i class="fa-solid fa-arrow-right text-2xl" style="color:var(--muted);"></i>
+
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 rounded-full flex items-center justify-center spin-anim" style="background: rgba(249,115,22,0.1); border: 3px solid var(--accent2); animation-duration: 1s;">
+                                <i class="fa-solid fa-person fa-xl" style="color:var(--accent2);"></i>
+                            </div>
+                            <div class="text-xs mt-2 font-bold" style="color:var(--accent2);">Lengan Dilipat</div>
+                            <div class="text-xs" style="color:var(--muted);">$I$ kecil, $\omega$ besar</div>
+                        </div>
+                    </div>
+                    <p class="text-sm mt-2" style="color:var(--muted);">Untuk mempertahankan $L$ tetap sama, jika $I$ mengecil, maka $\omega$ harus membesar. Skater berputar lebih cepat!</p>
+                </div>
+
+                <div class="prompt-wrapper">
+                    <div class="prompt-header"><div class="prompt-icon">?</div><div class="text-base font-medium">Contoh di Dunia Nyata?</div></div>
+                    <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Contoh</button>
+                    <div class="discussion-box">
+                        <ul class="list-disc pl-5 text-sm space-y-2" style="color:var(--fg);">
+                            <li><strong>Atlet Seluncur Indah:</strong> Menarik tangan ke dalam agar berputar sangat cepat.</li>
+                            <li><strong>Pelompat Tali/Voli:</strong> Melipat tubuh saat di udara untuk mempercepat rotasi gulungan.</li>
+                            <li><strong>Bintang Neutron:</strong> Inti bintang yang runtuh. Jari-jarinya mengecil drastis, sehingga $\omega$-nya melonjak hingga ratusan putaran per detik!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATIHAN SOAL SLIDE 13 -->
+        <div class="card p-6 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 flex items-center gap-2" style="color:var(--accent);"><i class="fa-solid fa-pencil-alt" style="color:var(--accent2);"></i> Latihan Soal: Skater Melipat Tangan</h4>
+            <p class="text-base mb-4" style="color:var(--fg); line-height: 1.7;">
+                Seorang skater berputar dengan kecepatan sudut $\omega_i = 2.0 \text{ rad/s}$ dengan lengan terbuka, sehingga momen inersianya $I_i = 3.0 \text{ kg}\cdot\text{m}^2$. Saat ia menarik lengannya ke dalam, momen inersianya berkurang menjadi $I_f = 0.8 \text{ kg}\cdot\text{m}^2$. Berapakah kecepatan sudut akhirnya ($\omega_f$)?
+            </p>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">1</div><div class="text-lg font-medium">Penerapan Hukum Kekekalan</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm"><strong>Asumsi:</strong> Tidak ada torsi luar (gesekan es diabaikan), maka $L_i = L_f$.</p>
+                    <div class="math-block-teal math-block" style="font-size: 1rem;">
+                        $$ I_i\omega_i = I_f\omega_f $$                     </div>
+                </div>
+            </div>
+
+            <div class="prompt-wrapper">
+                <div class="prompt-header"><div class="prompt-icon">2</div><div class="text-lg font-medium">Menghitung Kecepatan Sudut Akhir</div></div>
+                <button class="reveal-btn" onclick="toggleDiscussion(this)"><i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan</button>
+                <div class="discussion-box">
+                    <p class="mb-2 text-sm">Isolasi $\omega_f$ dan masukkan angkanya:</p>
+                    <div class="math-block" style="font-size: 1rem;">
+                        $$ \omega_f = \frac{I_i\omega_i}{I_f} = \frac{(3.0 \text{ kg}\cdot\text{m}^2)(2.0 \text{ rad/s})}{0.8 \text{ kg}\cdot\text{m}^2} $$                         $$ \omega_f = \frac{6.0}{0.8} = \mathbf{7.5 \text{ rad/s}} $$                     </div>
+                    <div class="mt-3 p-3 rounded-lg text-sm" style="background: rgba(22, 163, 74, 0.1); color: #16a34a; border-left: 3px solid #16a34a;">
+                        <i class="fa-solid fa-check-circle mr-1"></i> <strong>Kesimpulan:</strong> Dengan mengurangi momen inersia hingga kurang dari sepertiganya, kecepatan sudutnya meningkat hampir 4 kali lipat!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 14: RANGKUMAN VISUAL -->
+<section class="slide" id="slide14">
+    <div class="max-w-5xl mx-auto py-4">
+        <span class="badge anim-up" style="background:rgba(249,115,22,0.1);color:var(--accent2);">Rangkuman</span>
+        <h2 class="text-4xl md:text-5xl font-black mt-3 mb-8 anim-up-d1">Peta Konsep: Gerak Rotasi</h2>
+        
+        <div class="flex flex-col items-center justify-center gap-5 anim-up-d2">
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid var(--accent);">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Penyebab Perubahan Gerak</div>
+                <div class="text-3xl font-black mt-2" style="color:var(--accent);">Gaya ($\vec{F}$) + Jarak Poros ($r_\perp$)</div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <div class="card p-5 w-full max-w-2xl text-center" style="border-top: 4px solid var(--accent2);">
+                <div class="text-sm font-semibold" style="color:var(--muted);">Dinamika Rotasi (Hukum Newton II)</div>
+                <div class="text-3xl font-black mt-2" style="color:var(--accent2);">Torsi ($\Sigma\tau = I\alpha$)</div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
+                <div class="card p-5 text-center" style="border-top: 4px solid var(--accent);">
+                    <div class="text-sm font-semibold" style="color:var(--muted);">Keadaan Gerak Rotasi</div>
+                    <div class="text-2xl font-black mt-2" style="color:var(--accent);">Kecepatan Sudut ($\omega$)</div>
+                </div>
+                <div class="card p-5 text-center" style="border-top: 4px solid var(--accent2);">
+                    <div class="text-sm font-semibold" style="color:var(--muted);">Inersia Rotasi</div>
+                    <div class="text-2xl font-black mt-2" style="color:var(--accent2);">Momen Inersia ($I$)</div>
+                </div>
+            </div>
+
+            <i class="fa-solid fa-arrow-down text-3xl" style="color:var(--muted);"></i>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
+                <div class="card p-5 text-center" style="border-top: 4px solid #16a34a;">
+                    <div class="text-sm font-semibold" style="color:var(--muted);">Energi Rotasi</div>
+                    <div class="text-2xl font-black mt-2" style="color:#16a34a;">$KE_{rot} = \frac{1}{2}I\omega^2$</div>
+                </div>
+                <div class="card p-5 text-center" style="border-top: 4px solid var(--accent);">
+                    <div class="text-sm font-semibold" style="color:var(--muted);">Momentum Sudut</div>
+                    <div class="text-2xl font-black mt-2" style="color:var(--accent);">$L = I\omega$</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 mt-8 anim-up-d3" style="background: linear-gradient(135deg, #ffffff, #f8fafc);">
+            <h4 class="font-bold text-xl mb-4 text-center" style="color:var(--accent);">Poin Penting yang Harus Diingat:</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Pakai Radian:</strong> Selalu konversi derajat ke radian dan rpm ke rad/s sebelum memasukkan angka ke rumus rotasi.</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Momen Inersia Tergantung Poros:</strong> $I$ bukan sifat intrinsik benda, tapi bergantung di mana poros rotasinya.</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Analogi Kuat:</strong> $F \leftrightarrow \tau$, $m \leftrightarrow I$, $v \leftrightarrow \omega$, $a \leftrightarrow \alpha$, $p \leftrightarrow L$. Hafalan ini sangat kuat!</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-star mt-1" style="color:var(--accent2);"></i>
+                    <span class="text-base"><strong>Menggelinding = Translasi + Rotasi:</strong> Energi totalnya berjumlah dua, dan hubungan $v = r\omega$ adalah kunci penyelesaiannya.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 15: PENUTUPAN -->
+<section class="slide" id="slide15">
+    <div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full py-4">
+        <div class="flex items-center gap-6 mb-8 anim-up">
+            <img src="https://z-cdn-media.chatglm.cn/files/c45ad6a7-fee6-4b5e-bd38-0d89a72e1ce2.jpg?auth_key=1878645890-23b56d73a6b546c0a7a2d81d21f10d59-0-44aa2648c0b231affe34584ecd937178" alt="Logo ATMI" style="height:250px;width:250px;object-fit:contain;border-radius:8px;">
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-black text-center mb-4 anim-up-d1" style="color:var(--accent);">Terima Kasih!</h1>
+        <p class="text-xl md:text-2xl text-center max-w-2xl mb-8 anim-up-d2" style="color:var(--muted);line-height:1.7;">Kehidupan bukanlah lintasan lurus. Kadang kita harus menghadapi torsi, mengalahkan inersia, dan tetap menjaga momentum sudut kita agar terus berputar maju!</p>
+        
+        <div class="card p-6 max-w-2xl w-full anim-up-d3" style="background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(249,115,22,0.05));">
+            <div class="text-center mb-4">
+                <div class="font-bold text-xl" style="color:var(--accent);">Ir. Fidelis Gigih Triatmaja, S.T., M.T.</div>
+                <div class="text-base" style="color:var(--muted);">Dosen Pengampu Fisika Dasar</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+                <div class="flex items-center gap-3 justify-center"><i class="fa-solid fa-envelope w-5 text-center" style="color:var(--accent2);"></i><span>fidelis.gigih@atmi.ac.id</span></div>
+                <div class="flex items-center gap-3 justify-center"><i class="fa-solid fa-building w-5 text-center" style="color:var(--accent2);"></i><span>Lab WAP &ndash; TMI</span></div>
+            </div>
+        </div>
+
+        <p class="mt-10 text-sm anim-up-d4" style="color:var(--muted);">Politeknik ATMI Surakarta &mdash; Teknik Mesin Industri</p>
+    </div>
+</section>
+
+</div> <!-- End of slide-area -->
+
+<script>
+    // --- SLIDE NAVIGATION SYSTEM ---
+    const slides = document.querySelectorAll('.slide');
+    const navDotsContainer = document.getElementById('navDots');
+    const slideCounter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+    let currentSlide = 0;
+
+    function initNavDots() {
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('nav-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dot.setAttribute('aria-label', `Slide ${index + 1}`);
+            navDotsContainer.appendChild(dot);
+        });
+    }
+
+    function updateUI() {
+        const totalSlides = slides.length;
+        slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+        document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= slides.length || index === currentSlide) return;
+        const direction = index > currentSlide ? 1 : -1;
+        slides[currentSlide].classList.remove('active');
+        slides[currentSlide].classList.add('exit-left');
+        setTimeout(() => { slides[currentSlide - direction].classList.remove('exit-left'); }, 500);
+        currentSlide = index;
+        slides[currentSlide].style.transform = `translateX(${direction * 60}px)`;
+        void slides[currentSlide].offsetWidth;
+        slides[currentSlide].classList.add('active');
+        slides[currentSlide].style.transform = '';
+        updateUI();
+    }
+
+    function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => touchStartX = e.changedTouches[0].screenX);
+    document.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) { if (diff > 0) nextSlide(); else prevSlide(); }
+    });
+
+    // --- INTERACTIVE PROMPTS ---
+    function toggleDiscussion(btn) {
+        const wrapper = btn.closest('.prompt-wrapper');
+        const box = wrapper.querySelector('.discussion-box');
+        box.classList.toggle('show');
+        wrapper.classList.toggle('active');
+        if (box.classList.contains('show')) { btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Sembunyikan'; } 
+        else { btn.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Lihat Pembahasan'; }
+    }
+
+    // --- SLIDE 2 POLL LOGIC ---
+    let pollAnswered = false;
+    function selectPoll(element, choice) {
+        if (pollAnswered) return;
+        pollAnswered = true;
+        document.querySelectorAll('.poll-option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+        setTimeout(() => {
+            if (choice === 'c') {
+                element.classList.remove('selected');
+                element.classList.add('correct');
+            } else {
+                element.classList.remove('selected');
+                element.classList.add('wrong');
+                document.querySelectorAll('.poll-option')[2].classList.add('correct');
+            }
+            const answerPrompt = document.getElementById('answerPrompt');
+            const btn = answerPrompt.querySelector('.reveal-btn');
+            if (!answerPrompt.classList.contains('active')) { toggleDiscussion(btn); }
+        }, 600);
+    }
+
+    // --- SLIDE 5 WHEEL SIMULATION ---
+    let wheelAngle = 0;
+    let lastFrameTime = performance.now();
+    const wheelCanvas = document.getElementById('wheelCanvas');
+    const wheelCtx = wheelCanvas.getContext('2d');
+    
+    function updateWheelSim() {
+        const omega = parseFloat(document.getElementById('omegaSlider').value);
+        const r = parseFloat(document.getElementById('rSlider').value);
+        
+        document.getElementById('omegaValDisplay').innerText = omega.toFixed(1) + ' rad/s';
+        document.getElementById('rValDisplay').innerText = r.toFixed(1) + ' m';
+        
+        const v = r * omega;
+        const aR = omega * omega * r;
+        
+        document.getElementById('vResult').innerText = v.toFixed(2) + ' m/s';
+        document.getElementById('aRResult').innerText = aR.toFixed(2) + ' m/s²';
+    }
+
+    function drawArrow(ctx, fromX, fromY, toX, toY, color, width) {
+        const headLen = 8;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        ctx.beginPath(); ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY);
+        ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+    }
+
+    function animateWheel(currentTime) {
+        const deltaTime = (currentTime - lastFrameTime) / 1000;
+        lastFrameTime = currentTime;
+
+        const omega = parseFloat(document.getElementById('omegaSlider').value);
+        const r = parseFloat(document.getElementById('rSlider').value);
+        
+        wheelAngle += omega * deltaTime; // Increment angle
+
+        const w = wheelCanvas.width;
+        const h = wheelCanvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const R_vis = 150; // Visual radius of the wheel in pixels
+        const scale = R_vis / 1.5; // 1.5m maps to 150px
+
+        const r_vis = r * scale;
+
+        wheelCtx.clearRect(0, 0, w, h);
+
+        // Draw Outer Ring
+        wheelCtx.beginPath();
+        wheelCtx.arc(cx, cy, R_vis, 0, 2 * Math.PI);
+        wheelCtx.strokeStyle = '#cbd5e1'; wheelCtx.lineWidth = 4; wheelCtx.stroke();
+
+        // Draw Spokes
+        wheelCtx.strokeStyle = '#e2e8f0'; wheelCtx.lineWidth = 2;
+        for (let i = 0; i < 4; i++) {
+            const spokeAngle = wheelAngle + (i * Math.PI / 2);
+            wheelCtx.beginPath();
+            wheelCtx.moveTo(cx, cy);
+            wheelCtx.lineTo(cx + R_vis * Math.cos(spokeAngle), cy - R_vis * Math.sin(spokeAngle));
+            wheelCtx.stroke();
+        }
+
+        // Draw Center Axle
+        wheelCtx.beginPath(); wheelCtx.arc(cx, cy, 6, 0, 2 * Math.PI);
+        wheelCtx.fillStyle = '#1e293b'; wheelCtx.fill();
+
+        // Draw Point P
+        const px = cx + r_vis * Math.cos(wheelAngle);
+        const py = cy - r_vis * Math.sin(wheelAngle);
+        
+        // Line from center to P
+        wheelCtx.beginPath(); wheelCtx.moveTo(cx, cy); wheelCtx.lineTo(px, py);
+        wheelCtx.strokeStyle = '#0d9488'; wheelCtx.lineWidth = 2; wheelCtx.setLineDash([4, 4]); wheelCtx.stroke(); wheelCtx.setLineDash([]);
+
+        // Point P circle
+        wheelCtx.beginPath(); wheelCtx.arc(px, py, 8, 0, 2 * Math.PI);
+        wheelCtx.fillStyle = '#0d9488'; wheelCtx.fill();
+        wheelCtx.strokeStyle = '#fff'; wheelCtx.lineWidth = 2; wheelCtx.stroke();
+
+        // Vectors
+        const v = r * omega;
+        const aR = omega * omega * r;
+
+        // Velocity vector (tangential)
+        // Direction: perpendicular to radius vector. 
+        // Radius vector angle is wheelAngle. Tangential is wheelAngle + 90deg (CCW).
+        const vAngle = wheelAngle + Math.PI / 2;
+        const v_vis = v * 20; // scale for visibility
+        if (v > 0.01) {
+            drawArrow(wheelCtx, px, py, px + v_vis * Math.cos(vAngle), py - v_vis * Math.sin(vAngle), '#0d9488', 3);
+            wheelCtx.fillStyle = '#0d9488'; wheelCtx.font = 'bold 14px Space Grotesk'; 
+            const textOffX = 15 * Math.cos(vAngle); const textOffY = -15 * Math.sin(vAngle);
+            wheelCtx.fillText('v', px + v_vis * Math.cos(vAngle) + textOffX - 4, py - v_vis * Math.sin(vAngle) + textOffY + 5);
+        }
+
+        // Centripetal Acceleration vector (pointing inward)
+        // Direction: from P to Center
+        const aRAngle = wheelAngle + Math.PI; // Opposite to radius
+        const aR_vis = aR * 5; // scale for visibility
+        if (aR > 0.05) {
+            drawArrow(wheelCtx, px, py, px + aR_vis * Math.cos(aRAngle), py - aR_vis * Math.sin(aRAngle), '#16a34a', 3);
+            wheelCtx.fillStyle = '#16a34a'; wheelCtx.font = 'bold 14px Space Grotesk';
+            const textOffX2 = 15 * Math.cos(aRAngle); const textOffY2 = -15 * Math.sin(aRAngle);
+            wheelCtx.fillText('aR', px + aR_vis * Math.cos(aRAngle) + textOffX2 - 8, py - aR_vis * Math.sin(aRAngle) + textOffY2 + 5);
+        }
+
+        requestAnimationFrame(animateWheel);
+    }
+
+    // Init
+    updateWheelSim();
+    requestAnimationFrame(animateWheel);
+
+    // --- SLIDE 8 TORSI SIMULATION ---
+    function updateTorqueSim() {
+        const thetaDeg = parseFloat(document.getElementById('thetaTorqueSlider').value);
+        const rad = thetaDeg * Math.PI / 180;
+        const r = 1.0; // meter
+        const F = 50;  // Newton
+        const torque = r * F * Math.sin(rad);
+        
+        document.getElementById('thetaTorqueDisplay').innerText = thetaDeg + '°';
+        document.getElementById('thetaTorqueCalc').innerText = thetaDeg;
+        
+        const torqueResultEl = document.getElementById('torqueResultDisplay');
+        const torqueStatusEl = document.getElementById('torqueStatusDisplay');
+        
+        torqueResultEl.innerText = torque.toFixed(1) + " N·m";
+        
+        if (thetaDeg == 90) {
+            torqueResultEl.style.color = "var(--accent)"; torqueStatusEl.style.color = "var(--accent)";
+            torqueStatusEl.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Torsi Maksimum (Gaya Tegak Lurus)';
+        } else if (thetaDeg > 0 && thetaDeg < 90) {
+            torqueResultEl.style.color = "var(--accent2)"; torqueStatusEl.style.color = "var(--accent2)";
+            torqueStatusEl.innerHTML = '<i class="fa-solid fa-arrow-down mr-1"></i> Torsi Parsial (Menurun)';
+        } else if (thetaDeg > 90 && thetaDeg < 180) {
+            torqueResultEl.style.color = "var(--accent2)"; torqueStatusEl.style.color = "var(--accent2)";
+            torqueStatusEl.innerHTML = '<i class="fa-solid fa-arrow-down mr-1"></i> Torsi Parsial (Menurun)';
+        } else {
+            torqueResultEl.style.color = "var(--muted)"; torqueStatusEl.style.color = "var(--muted)";
+            torqueStatusEl.innerHTML = '<i class="fa-solid fa-times-circle mr-1"></i> Torsi Nol (Tidak Ada Rotasi)';
+        }
+        
+        drawTorqueCanvas(thetaDeg);
+    }
+
+    function drawTorqueCanvas(thetaDeg) {
+        const canvas = document.getElementById('torqueCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const rad = thetaDeg * Math.PI / 180;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const hingeX = 60;
+        const hingeY = canvas.height / 2;
+        const doorLen = 250;
+        const knobX = hingeX + doorLen;
+        
+        // Draw Door
+        ctx.fillStyle = '#f1f5f9';
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.rect(hingeX, hingeY - 15, doorLen, 30);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Draw Hinge
+        ctx.beginPath();
+        ctx.arc(hingeX, hingeY, 8, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        
+        // Draw r vector
+        ctx.beginPath();
+        ctx.moveTo(hingeX, hingeY);
+        ctx.lineTo(knobX, hingeY);
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 16px Space Grotesk';
+        ctx.fillText('r', hingeX + doorLen/2 - 5, hingeY - 25);
+        
+        // Draw Force Vector
+        const fLen = 100;
+        // Angle is measured from the r vector (horizontal right). CCW positive.
+        const fEndX = knobX + fLen * Math.cos(rad);
+        const fEndY = hingeY - fLen * Math.sin(rad); // canvas Y is down, so minus for up
+        
+        drawArrow(ctx, knobX, hingeY, fEndX, fEndY, '#f97316', 3);
+        ctx.fillStyle = '#f97316';
+        ctx.font = 'bold 16px Space Grotesk';
+        ctx.fillText('F', fEndX + 5, fEndY - 5);
+        
+        // Draw r_perp (lever arm)
+        const r_perp_len = doorLen * Math.sin(rad);
+        if (thetaDeg > 0 && thetaDeg < 180) {
+            const r_perp_endX = knobX + r_perp_len * Math.cos(rad + Math.PI/2);
+            const r_perp_endY = hingeY - r_perp_len * Math.sin(rad + Math.PI/2);
+            
+            ctx.beginPath();
+            ctx.moveTo(hingeX, hingeY);
+            ctx.lineTo(r_perp_endX, r_perp_endY);
+            ctx.setLineDash([4, 3]);
+            ctx.strokeStyle = '#0d9488';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillStyle = '#0d9488';
+            ctx.font = '12px Space Grotesk';
+            ctx.fillText('r⊥', hingeX + r_perp_len/2 * Math.cos(rad + Math.PI/2) - 10, hingeY - r_perp_len/2 * Math.sin(rad + Math.PI/2) - 5);
+        }
+        
+        // Draw angle arc
+        if (thetaDeg > 0 && thetaDeg < 180) {
+            ctx.beginPath();
+            ctx.arc(knobX, hingeY, 30, 0, -rad, true);
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.font = '14px serif';
+            ctx.fillText('θ', knobX + 35 * Math.cos(-rad/2), hingeY + 35 * Math.sin(-rad/2) + 5);
+        }
+    }
+    
+    // Init Torque Canvas
+    updateTorqueSim();
+
+    initNavDots();
+    updateUI();
+</script>
+
+</body>
+</html>
